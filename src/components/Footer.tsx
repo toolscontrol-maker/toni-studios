@@ -503,7 +503,7 @@ export default function Footer() {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 32px 0 40px;
+            padding: 56px 0 72px;
           }
           .footer-mobile-socials-divider {
             width: 100%;
