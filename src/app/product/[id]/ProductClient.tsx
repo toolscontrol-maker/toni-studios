@@ -1260,7 +1260,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         /* ── COMPLETE THE OUTFIT ── */
         .outfit-section {
-          background: #f5f5f3;
+          background: #EEEDED;
         }
         .outfit-label {
           font-size: 16px;
