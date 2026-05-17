@@ -30,6 +30,7 @@ export default function Footer() {
         </div>
       </div>
 
+
       <div className="footer-links-container">
 
         {/* Column 1: Contact Us + Client Services stacked */}
