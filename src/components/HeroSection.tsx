@@ -326,26 +326,34 @@ export default function HeroSection() {
 
 
         @media (max-width: 767px) {
-          .hero-triple-section, .hero-dual-section {
+          .hero-dual-section {
             flex-direction: column;
             gap: 0;
             padding: 0;
-            height: auto;
+            height: calc(2 * 100dvh);
+            align-items: stretch;
+            scroll-snap-align: none;
+          }
+          .hero-triple-section {
+            flex-direction: column;
+            gap: 0;
+            padding: 0;
+            height: calc(3 * 100dvh);
             align-items: stretch;
             scroll-snap-align: none;
           }
           .hero-triple-panel, .hero-dual-panel {
             aspect-ratio: unset;
-            height: 100vh;
             height: 100dvh;
             width: 100%;
             flex: none;
-            border-top: 110px solid #fff;
-            border-bottom: 30px solid #fff;
-            border-left: 8vw solid #fff;
-            border-right: 8vw solid #fff;
+            padding-top: 80px;
+            padding-bottom: 20px;
+            padding-left: 8vw;
+            padding-right: 8vw;
             box-sizing: border-box;
             scroll-snap-align: start;
+            scroll-snap-stop: always;
             background: #fff;
           }
           .hero-triple-cta, .hero-dual-cta {

@@ -66,9 +66,8 @@ export default async function Home() {
 
       <style>{`
         /* Scroll-snap at page level for homepage — mandatory snapping */
-        html, body {
+        html {
           scroll-snap-type: y mandatory;
-          overscroll-behavior: none;
         }
 
         /* ═══════════════════════════════════════════════════
