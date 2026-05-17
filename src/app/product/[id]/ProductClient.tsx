@@ -726,7 +726,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         /* ── INFO PANEL ── */
         .ss-info {
-          padding: 24px 20px 140px 20px;
+          padding: 24px 20px 28px 20px;
           background: #EEEDED;
         }
 
@@ -1227,7 +1227,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             grid-template-columns: 1fr 1fr;
             gap: 6px;
             background: #fff;
-            padding: 0 20px 24px 20px;
+            padding: 0 20px 80px 20px;
           }
           .ss-mobile-img-cell {
             aspect-ratio: 3 / 4;
