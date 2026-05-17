@@ -479,10 +479,10 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
 
           {/* Delivery info */}
-          <div className="ss-delivery">
+          {/* <div className="ss-delivery">
             <Check size={13} strokeWidth={1.5} color="#111" />
             <span>{t('common.freeDeliveryShort')}</span>
-          </div>
+          </div> */}
 
           {/* Accordion sections */}
           <div className="ss-accordions">
