@@ -43,8 +43,8 @@ export default function Navbar() {
   const [subnavOpen, setSubnavOpen] = useState(false);
   const currentCollection = collections.find(c => c.handle === currentCollectionHandle);
 
-  // Pages with fullbleed gallery (transparent header overlay) — product pages always solid
-  const isFullbleed = isCollection;
+  // Pages with fullbleed gallery (transparent header overlay)
+  const isFullbleed = isProduct || isCollection;
 
   const BANNER_H = 22;
 
@@ -112,7 +112,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`acne-header ${solid ? "solid" : "transparent"} ${isHome && !pastVideo ? "home-top" : ""} ${isHome && pastVideo ? "home-dark" : ""} ${isFullbleed && !scrolledPast ? "fullbleed-top" : ""} ${!headerVisible ? "header-hidden" : ""} ${overDark ? "over-dark" : ""}`} style={{top: `${navTop}px`}}>
+      <header className={`acne-header ${solid ? "solid" : "transparent"} ${isHome && !pastVideo ? "home-top" : ""} ${isHome && pastVideo ? "home-dark" : ""} ${isCollection && !scrolledPast ? "fullbleed-top" : ""} ${!headerVisible ? "header-hidden" : ""} ${overDark ? "over-dark" : ""}`} style={{top: `${navTop}px`}}>
         <div className="acne-header-inner">
           {/* LEFT: Hamburger + Search */}
           <div className="acne-nav-left">
