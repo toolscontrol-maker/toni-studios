@@ -356,6 +356,7 @@ export default function CartDrawer() {
           background: #fff;
           color: #111;
           border: 1px solid #111;
+          font-weight: 700;
         }
         .cd-favorites-btn:hover { background: #f5f5f5; }
 
