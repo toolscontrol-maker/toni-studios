@@ -1132,14 +1132,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             display: block;
           }
 
-          /* Info panel: sticky on the right, full viewport height */
+          /* Info panel: sticky on the right, from header to bottom */
           .ss-info {
             width: 42%;
             position: sticky;
-            top: 0;
-            height: 100vh;
+            top: 60px;
+            height: calc(100vh - 60px);
             overflow-y: auto;
-            padding: 80px 70px;
+            padding: 60px 70px;
             scrollbar-width: none;
             box-sizing: border-box;
             display: flex;
