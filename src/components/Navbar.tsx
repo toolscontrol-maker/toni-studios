@@ -64,32 +64,10 @@ export default function Navbar() {
     ticking.current = true;
     requestAnimationFrame(() => {
       const y = window.scrollY;
-      const delta = y - lastScrollY.current;
-      // Past the header height threshold
       setScrolledPast(y > 80);
-      // Past the video hero section (~one viewport)
       setPastVideo(y > window.innerHeight * 0.5);
-      // Always visible — never hide on scroll
       setHeaderVisible(true);
-      // Slide navbar up as banner scrolls out
       setNavTop(Math.max(0, BANNER_H - y));
-
-      // Check for dark sections
-      const header = document.querySelector('.acne-header');
-      let isDark = false;
-      if (header) {
-        const headerRect = header.getBoundingClientRect();
-        const darkSections = document.querySelectorAll('.dark-section');
-        for (let i = 0; i < darkSections.length; i++) {
-          const rect = darkSections[i].getBoundingClientRect();
-          if (rect.top <= headerRect.bottom && rect.bottom >= headerRect.top) {
-            isDark = true;
-            break;
-          }
-        }
-      }
-      setOverDark(isDark);
-
       lastScrollY.current = y;
       ticking.current = false;
     });
@@ -99,6 +77,23 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
+
+  // IntersectionObserver for dark sections — fires on viewport entry, not scroll position
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let anyDark = false;
+        entries.forEach(entry => {
+          if (entry.isIntersecting) anyDark = true;
+        });
+        setOverDark(anyDark);
+      },
+      { threshold: 0.5 }
+    );
+    const sections = document.querySelectorAll('.dark-section');
+    sections.forEach(s => observer.observe(s));
+    return () => observer.disconnect();
+  }, [pathname]);
 
   // Body padding
   useEffect(() => {
