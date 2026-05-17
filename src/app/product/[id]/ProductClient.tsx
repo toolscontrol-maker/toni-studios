@@ -42,6 +42,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
   }, [product.handle]);
 
   useEffect(() => {
+    import('@/lib/shopify').then(({ getRecommendedProducts }) => {
+      getRecommendedProducts(product.handle, 8)
+        .then(prods => setCompleteOutfit(prods.slice(0, 6)))
+        .catch(() => {});
+    });
+  }, [product.handle]);
+
+  useEffect(() => {
     try {
       const stored: RecentProduct[] = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) ?? '[]');
       const current: RecentProduct = {
@@ -98,6 +106,36 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
   const recScrollStart = useRef(0);
   const recIsDragging = useRef(false);
   const recDragMoved = useRef(false);
+
+  const outfitCarouselRef = useRef<HTMLDivElement>(null);
+  const outfitDragStart = useRef(0);
+  const outfitScrollStart = useRef(0);
+  const outfitIsDragging = useRef(false);
+  const outfitDragMoved = useRef(false);
+  const [completeOutfit, setCompleteOutfit] = useState<RecommendedProduct[]>([]);
+
+  function outfitPointerDown(e: React.PointerEvent) {
+    outfitDragStart.current = e.clientX;
+    outfitScrollStart.current = outfitCarouselRef.current?.scrollLeft ?? 0;
+    outfitIsDragging.current = true;
+    outfitDragMoved.current = false;
+  }
+  function outfitPointerMove(e: React.PointerEvent) {
+    if (!outfitIsDragging.current) return;
+    const dx = e.clientX - outfitDragStart.current;
+    if (Math.abs(dx) > 10) {
+      outfitDragMoved.current = true;
+      outfitCarouselRef.current?.classList.add('dragging');
+      if (outfitCarouselRef.current) outfitCarouselRef.current.scrollLeft = outfitScrollStart.current - dx;
+    }
+  }
+  function outfitPointerUp() {
+    outfitIsDragging.current = false;
+    outfitCarouselRef.current?.classList.remove('dragging');
+  }
+  function outfitCarouselClick(e: React.MouseEvent) {
+    if (outfitDragMoved.current) { e.preventDefault(); e.stopPropagation(); outfitDragMoved.current = false; }
+  }
 
   function recPointerDown(e: React.PointerEvent) {
     recDragStart.current = e.clientX;
@@ -586,6 +624,31 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           </button>
         </div>
       </div>
+
+      {/* ── COMPLETE THE OUTFIT ── */}
+      {completeOutfit.length > 0 && (
+        <section className="rec-section outfit-section">
+          <h2 className="rec-label outfit-label">COMPLETE THE OUTFIT</h2>
+          <div className="rec-carousel-wrap">
+            <div
+              className="rec-carousel"
+              ref={outfitCarouselRef}
+              onPointerDown={outfitPointerDown}
+              onPointerMove={outfitPointerMove}
+              onPointerUp={outfitPointerUp}
+              onPointerCancel={outfitPointerUp}
+              onClick={outfitCarouselClick}
+            >
+              <div style={{flexShrink: 0, width: 16, minWidth: 16}} />
+              {completeOutfit.map((p) => (
+                <div className="rec-carousel-item" key={p.handle}>
+                  <RecommendedCard key={p.handle} product={p} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── RECOMMENDED ── */}
       {recommended.length > 0 && (
@@ -1174,6 +1237,16 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           .ss-info {
             padding: 80px 80px;
           }
+        }
+
+        /* ── COMPLETE THE OUTFIT ── */
+        .outfit-section {
+          background: #f5f5f3;
+        }
+        .outfit-label {
+          font-size: 16px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
         }
 
         /* ── RECOMMENDED ── */
