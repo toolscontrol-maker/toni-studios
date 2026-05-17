@@ -345,6 +345,10 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
   const descriptionFirstLine = product.description?.split(/[.\n]/)[0]?.trim() || '';
 
+  const gridImages = images.length > 0
+    ? Array.from({ length: 4 }, (_, i) => images[i % images.length])
+    : [];
+
   return (
     <>
       <div className="ss-pdp-layout">
@@ -527,18 +531,19 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           </div>
 
         </div>
-      </div>
 
-      {/* ── MOBILE IMAGE GRID ── */}
-      {images.length > 0 && (
-        <div className="ss-mobile-img-grid">
-          {images.slice(0, 4).map((img, i) => (
-            <div key={i} className="ss-mobile-img-cell">
-              <img src={img} alt={`${product.title} – ${i + 1}`} draggable={false} />
-            </div>
-          ))}
-        </div>
-      )}
+        {/* ── MOBILE IMAGE GRID ── */}
+        {gridImages.length > 0 && (
+          <div className="ss-mobile-img-grid">
+            {gridImages.map((img, i) => (
+              <div key={i} className="ss-mobile-img-cell">
+                <img src={img} alt={`${product.title} – ${i + 1}`} draggable={false} />
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
 
       {/* ── SIZE DRAWER ── */}
       <div className={`ss-size-drawer${sizeOpen && hasSizes ? ' open' : ''}`}>
