@@ -108,9 +108,11 @@ export default function WishlistClient() {
           margin: 0 0 32px;
         }
         .wl-signin {
-          color: #0000cc;
+          color: #111;
           text-decoration: underline;
           text-underline-offset: 2px;
+          text-transform: uppercase;
+          font-weight: 700;
         }
         .wl-empty {
           font-size: 12px;
@@ -180,7 +182,7 @@ export default function WishlistClient() {
           text-transform: uppercase;
           letter-spacing: 0.03em;
           line-height: 1.3;
-          color: #0000cc;
+          color: #111;
         }
         .wl-price {
           font-size: 11px;

@@ -113,7 +113,7 @@ export default function Navbar() {
 
   // Determine header style class
   // Home: always transparent. Other pages: solid when scrolled up past threshold.
-  const solid = !isHome && scrolledPast && headerVisible;
+  const solid = !isHome && (!isFullbleed || scrolledPast);
 
   return (
     <>
