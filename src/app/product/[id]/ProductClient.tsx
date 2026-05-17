@@ -870,7 +870,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         .ss-actions {
           display: flex;
           gap: 0;
-          margin-bottom: 16px;
+          margin-bottom: 0;
           height: 48px;
         }
         .ss-cta-btn {
