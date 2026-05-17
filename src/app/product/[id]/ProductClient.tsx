@@ -448,15 +448,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             </div>
           )}
 
-          {/* Action row: bookmark + select size / add to bag */}
+          {/* Action row: select size | add to favorites — 50/50 */}
           <div className="ss-actions">
-            <button
-              className="ss-bookmark"
-              aria-label="Add to wishlist"
-              onClick={() => toggle(wishlistItem)}
-            >
-              <Bookmark size={18} strokeWidth={1.4} fill={inWishlist ? '#111' : 'none'} color="#111" />
-            </button>
             <button
               className="ss-cta-btn"
               onClick={handleAddToBag}
@@ -467,13 +460,16 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
                 : !selectedVariant.availableForSale
                 ? t('common.soldOut')
                 : needsSizeSelection
-                ? (
-                  <span style={{display:'flex',alignItems:'center',gap:8,justifyContent:'center'}}>
-                    <span style={{width:7,height:7,borderRadius:'50%',background:'#fff',display:'inline-block',flexShrink:0}}/>
-                    {isGiftCard ? 'SELECT TYPE' : t('common.selectSize')}
-                  </span>
-                )
+                ? (isGiftCard ? 'SELECT TYPE' : t('common.selectSize'))
                 : t('common.addToBag')}
+            </button>
+            <button
+              className="ss-bookmark"
+              aria-label="Add to wishlist"
+              onClick={() => toggle(wishlistItem)}
+            >
+              <Bookmark size={14} strokeWidth={1.4} fill={inWishlist ? '#111' : 'none'} color="#111" />
+              <span className="ss-bookmark-label">{inWishlist ? 'SAVED' : 'ADD TO FAVORITES'}</span>
             </button>
           </div>
 
@@ -826,30 +822,15 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           margin-bottom: 16px;
           height: 48px;
         }
-        .ss-bookmark {
-          width: 48px;
-          height: 48px;
-          border: 1px solid #d0d0d0;
-          background: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          flex-shrink: 0;
-          border-radius: 0;
-          transition: background 0.15s;
-        }
-        .ss-bookmark:hover { background: #f5f5f5; }
         .ss-cta-btn {
           flex: 1;
           height: 48px;
           background: #111;
           color: #fff;
           border: 1px solid #111;
-          border-left: none;
           border-radius: 0;
           font-family: inherit;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 500;
           text-transform: uppercase;
           letter-spacing: 0.12em;
@@ -858,6 +839,28 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-cta-btn:hover:not(:disabled) { background: #333; }
         .ss-cta-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ss-bookmark {
+          flex: 1;
+          height: 48px;
+          border: 1px solid #d0d0d0;
+          border-left: none;
+          background: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          cursor: pointer;
+          border-radius: 0;
+          transition: background 0.15s;
+          font-family: inherit;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.10em;
+          color: #111;
+        }
+        .ss-bookmark:hover { background: #f5f5f5; }
+        .ss-bookmark-label { white-space: nowrap; }
 
         /* ── SIZE DRAWER ── */
         .ss-size-drawer {
