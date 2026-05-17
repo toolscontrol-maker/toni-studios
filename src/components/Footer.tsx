@@ -495,7 +495,60 @@ export default function Footer() {
             text-underline-offset: 2px;
           }
         }
+        .footer-mobile-socials {
+          display: none;
+        }
+        @media (max-width: 767px) {
+          .footer-mobile-socials {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 0 40px;
+          }
+          .footer-mobile-socials-divider {
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+            margin-bottom: 28px;
+          }
+          .footer-mobile-socials-icons {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+          }
+          .footer-mobile-socials-icons a {
+            color: #111;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: opacity 0.15s;
+          }
+          .footer-mobile-socials-icons a:hover { opacity: 0.5; }
+        }
       `}</style>
+
+      <div className="footer-mobile-socials">
+        <div className="footer-mobile-socials-divider" />
+        <div className="footer-mobile-socials-icons">
+          <Link href="#" aria-label="Facebook">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </Link>
+          <Link href="#" aria-label="Twitter / X">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </Link>
+          <Link href="#" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+            </svg>
+          </Link>
+        </div>
+      </div>
     </footer>
   );
 }
