@@ -345,7 +345,7 @@ export default function CartDrawer() {
           letter-spacing: 0.12em;
           cursor: pointer;
           transition: background 0.15s;
-          border-radius: 6px;
+          border-radius: 0;
         }
         .cd-checkout-btn {
           background: #111;
