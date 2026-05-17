@@ -133,12 +133,12 @@ export default function Navbar() {
           {/* RIGHT: Account, Wishlist, Cart */}
           <div className="acne-nav-right">
             <Link href={accountHref} className="acne-right-icon" aria-label="Account">
-              <User size={18} strokeWidth={1.4} fill="currentColor" />
+              <User size={18} strokeWidth={1} fill="none" />
             </Link>
 
             <Link href="/wishlist" className="acne-right-icon" aria-label="Wishlist">
               <svg width="18" height="18" viewBox="0 0 12 12" fill="none">
-                <polygon fill="none" stroke="currentColor" strokeWidth="0.9" points="1.5,0 1.5,12 6,9.8181763 10.5,12 10.5,0 "/>
+                <polygon fill="none" stroke="currentColor" strokeWidth="0.8" strokeLinejoin="round" points="1.5,0 1.5,12 6,9.8181763 10.5,12 10.5,0 "/>
               </svg>
             </Link>
 
@@ -229,7 +229,6 @@ export default function Navbar() {
         }
         .acne-header.fullbleed-top svg {
           stroke: #fff;
-          fill: currentColor;
         }
 
         /* Home page at top: transparent with WHITE icons/text (over video) */
@@ -244,7 +243,6 @@ export default function Navbar() {
         }
         .acne-header.home-top svg {
           stroke: #fff;
-          fill: currentColor;
         }
 
         /* Home page past video: transparent with BLACK icons/text */
@@ -259,7 +257,6 @@ export default function Navbar() {
         }
         .acne-header.home-dark svg {
           stroke: #000;
-          fill: currentColor;
         }
 
         /* Over dark section: force white text/icons */
@@ -274,7 +271,6 @@ export default function Navbar() {
         }
         .acne-header.over-dark svg {
           stroke: #fff !important;
-          fill: currentColor !important;
         }
 
         .acne-header.solid {
