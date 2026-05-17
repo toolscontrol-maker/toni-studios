@@ -229,6 +229,7 @@ export default function Navbar() {
         }
         .acne-header.fullbleed-top svg {
           stroke: #fff;
+          fill: currentColor;
         }
 
         /* Home page at top: transparent with WHITE icons/text (over video) */
@@ -243,6 +244,7 @@ export default function Navbar() {
         }
         .acne-header.home-top svg {
           stroke: #fff;
+          fill: currentColor;
         }
 
         /* Home page past video: transparent with BLACK icons/text */
@@ -257,6 +259,7 @@ export default function Navbar() {
         }
         .acne-header.home-dark svg {
           stroke: #000;
+          fill: currentColor;
         }
 
         /* Over dark section: force white text/icons */
@@ -271,6 +274,7 @@ export default function Navbar() {
         }
         .acne-header.over-dark svg {
           stroke: #fff !important;
+          fill: currentColor !important;
         }
 
         .acne-header.solid {
