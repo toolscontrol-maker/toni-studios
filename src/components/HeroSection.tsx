@@ -66,7 +66,7 @@ export default function HeroSection() {
       </section>
 
       {/* Viewport 2.5: Single collection block */}
-      <section className="hero-single-section">
+      <section className="hero-single-section dark-section">
         <Link href="/collection/spring-summer-2026" className="hero-single-panel">
           <img src={imgs[8]} alt="Spring Summer" className="hero-single-img" loading="lazy" decoding="async" />
           <span className="hero-single-cta">SPRING-SUMMER 2026 COLLECTION</span>
