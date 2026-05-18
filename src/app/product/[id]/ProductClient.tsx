@@ -173,20 +173,30 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
   }, []);
 
   useEffect(() => {
-    const carousels = [outfitCarouselRef.current, recentCarouselRef.current];
-    const cleanups: (() => void)[] = [];
-    carousels.forEach(el => {
-      if (!el) return;
-      const handler = (e: WheelEvent) => {
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-        e.preventDefault();
-        el.scrollLeft += e.deltaY;
-      };
-      el.addEventListener('wheel', handler, { passive: false });
-      cleanups.push(() => el.removeEventListener('wheel', handler));
-    });
-    return () => cleanups.forEach(fn => fn());
-  }, [completeOutfit.length, recentlyViewed.length]);
+    const el = outfitCarouselRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completeOutfit.length]);
+
+  useEffect(() => {
+    const el = recentCarouselRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recentlyViewed.length]);
 
   useEffect(() => {
     const el = infoRef.current;
