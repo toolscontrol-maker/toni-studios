@@ -323,7 +323,7 @@ export default function Navbar() {
           letter-spacing: 0.04em;
         }
 
-        .acne-nav-left { display: flex; align-items: stretch; flex: 1; }
+        .acne-nav-left { display: flex; align-items: center; flex: 1; }
         .acne-nav-links { display: flex; align-items: center; gap: 28px; }
         .acne-nav-links a {
           font-size: 11px;
