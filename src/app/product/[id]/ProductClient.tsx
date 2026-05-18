@@ -186,7 +186,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
       cleanups.push(() => el.removeEventListener('wheel', handler));
     });
     return () => cleanups.forEach(fn => fn());
-  }, []);
+  }, [completeOutfit.length, recentlyViewed.length]);
 
   useEffect(() => {
     const el = infoRef.current;
