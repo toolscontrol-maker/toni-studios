@@ -1157,7 +1157,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         /* Accordion sections */
         .ss-accordions {
-          margin-top: 0;
+          margin-top: 32px;
         }
         .ss-accordion-item {
           border-bottom: 1px solid #e8e8e8;
