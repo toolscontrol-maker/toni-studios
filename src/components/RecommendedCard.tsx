@@ -85,7 +85,7 @@ export default function RecommendedCard({ product }: Props) {
           position: relative;
           width: 100%;
           aspect-ratio: 3 / 4;
-          background: #ffffff;
+          background: #EEEDED;
           overflow: hidden;
         }
         .rec-img {
