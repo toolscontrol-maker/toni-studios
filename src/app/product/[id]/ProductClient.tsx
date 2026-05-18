@@ -1215,6 +1215,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: #EEEDED;
           }
           .ss-info::-webkit-scrollbar { display: none; }
 
