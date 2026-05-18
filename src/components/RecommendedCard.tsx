@@ -75,6 +75,10 @@ export default function RecommendedCard({ product }: Props) {
           text-decoration: none;
           color: inherit;
           cursor: pointer;
+          opacity: 1 !important;
+        }
+        .rec-card:hover {
+          opacity: 1 !important;
         }
         .rec-img-wrap {
           position: relative;
