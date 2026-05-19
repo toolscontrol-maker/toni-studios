@@ -165,7 +165,7 @@ export default function WishlistClient() {
         .wl-img-wrap {
           width: 100%;
           aspect-ratio: 3 / 4;
-          background: #f5f5f5;
+          background: #EEEDED;
           overflow: hidden;
         }
         .wl-img {

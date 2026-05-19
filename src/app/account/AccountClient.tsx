@@ -192,7 +192,7 @@ export default function AccountClient() {
           width: 48px;
           height: 64px;
           object-fit: contain;
-          background: #f5f5f5;
+          background: #EEEDED;
         }
         .acc-cart-info {
           display: flex;
@@ -219,7 +219,7 @@ export default function AccountClient() {
           width: 40px;
           height: 52px;
           object-fit: contain;
-          background: #f5f5f5;
+          background: #EEEDED;
         }
         .acc-wish-more {
           font-size: 11px;

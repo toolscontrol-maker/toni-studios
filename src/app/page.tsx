@@ -150,6 +150,7 @@ export default async function Home() {
           align-items: center;
           justify-content: center;
           overflow: hidden;
+          background: #EEEDED;
         }
 
         .shop-product-img img {
