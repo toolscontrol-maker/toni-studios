@@ -636,6 +636,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             <span>{t('common.freeDeliveryShort')}</span>
           </div> */}
 
+          {/* Early access promo line */}
+          <p className="ss-early-access">Get access to early pre sales</p>
+
           {/* Accordion sections */}
           <div className="ss-accordions">
             <div className="ss-accordion-item">
@@ -1191,9 +1194,20 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           margin-bottom: 0;
         }
 
+        /* Early access line */
+        .ss-early-access {
+          text-align: center;
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #888;
+          margin: 24px 0 0;
+        }
+
         /* Accordion sections */
         .ss-accordions {
-          margin-top: 32px;
+          margin-top: 16px;
         }
         .ss-accordion-item {
           border-bottom: 1px solid #e8e8e8;

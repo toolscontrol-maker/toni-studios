@@ -484,7 +484,7 @@ export default function CollectionClient({ collection }: { collection: Collectio
         /* ── GALLERY ── */
         .col-gallery {
           position: relative;
-          background: #EEEDED;
+          background: #e8e4df;
           line-height: 0;
         }
         .col-gallery-slide {
@@ -494,7 +494,7 @@ export default function CollectionClient({ collection }: { collection: Collectio
           align-items: center;
           justify-content: center;
           overflow: hidden;
-          background: #EEEDED;
+          background: #e8e4df;
         }
         .col-gallery-slide .col-main-img {
           width: 100%;
@@ -923,7 +923,7 @@ export default function CollectionClient({ collection }: { collection: Collectio
           }
           .col-gallery-mobile-rest {
             display: block;
-            background: #EEEDED;
+            background: #e8e4df;
             line-height: 0;
             font-size: 0;
           }
@@ -1036,7 +1036,7 @@ export default function CollectionClient({ collection }: { collection: Collectio
           position: relative;
           width: 100%;
           aspect-ratio: 3 / 4;
-          background: #EEEDED;
+          background: #f5f5f5;
           overflow: hidden;
         }
         .ymal-img {

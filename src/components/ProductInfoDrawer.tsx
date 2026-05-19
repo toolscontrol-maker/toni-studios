@@ -89,7 +89,7 @@ export default function ProductInfoDrawer({ isOpen, onClose, title, heroImage, c
         .pid-hero {
           width: 100%;
           flex-shrink: 0;
-          background: #EEEDED;
+          background: #f5f5f5;
         }
         .pid-hero img {
           width: 100%;
