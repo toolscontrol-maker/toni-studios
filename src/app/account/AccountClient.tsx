@@ -102,7 +102,7 @@ export default function AccountClient() {
           max-width: 960px;
           margin: 0 auto;
           padding: 24px 24px 80px;
-          font-family: 'Creato Display', sans-serif;
+          font-family: 'Coolvetica', sans-serif;
           color: #111;
         }
 
