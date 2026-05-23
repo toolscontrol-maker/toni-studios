@@ -7,7 +7,7 @@ export default function FindStore() {
         <div className="find-store-img">
           <img
             src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=900&q=80"
-            alt="Tienda Tonet Paris"
+            alt="Tienda Tonet"
           />
         </div>
         <div className="find-store-content">

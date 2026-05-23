@@ -32,7 +32,7 @@ export default function Footer() {
 
       {!isMinimalPage && (
         <div className="footer-newsletter-mobile">
-          <p className="fnm-title">Be the first to access Tonet Paris Giftings and presales</p>
+          <p className="fnm-title">Be the first to access Tonet Giftings and presales</p>
           <div className="fnm-form">
             <input type="email" placeholder="Your Email*" className="fnm-input" />
             <button type="submit" className="fnm-submit">SIGN UP</button>
@@ -85,10 +85,10 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Column 5: World of Tonet Paris */}
+        {/* Column 5: World of Tonet */}
         <div className="footer-col">
           <input type="checkbox" id="footer-col-5" className="accordion-toggle" defaultChecked />
-          <label htmlFor="footer-col-5" className="col-title">World of Tonet Paris <span className="chevron"></span></label>
+          <label htmlFor="footer-col-5" className="col-title">World of Tonet <span className="chevron"></span></label>
           <ul className="col-links">
             <li><Link href="#">Founder</Link></li>
             <li><Link href="#">Heritage</Link></li>

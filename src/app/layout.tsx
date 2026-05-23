@@ -16,8 +16,8 @@ import MenuDrawer from "@/components/MenuDrawer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TONET PARIS",
-  description: "TONET PARIS — Online Store",
+  title: "TONET",
+  description: "TONET — Online Store",
   icons: {
     icon: '/icon.png',
   },

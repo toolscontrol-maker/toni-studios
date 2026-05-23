@@ -41,9 +41,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ─── WORLD OF TONET PARIS ─── */}
+      {/* ─── WORLD OF TONET ─── */}
       <section className="hero-world-section">
-        <h2 className="hero-world-title">WORLD OF TONET PARIS</h2>
+        <h2 className="hero-world-title">WORLD OF TONET</h2>
         <div className="hero-world-grid">
           <Link href="/about" className="hero-world-panel">
             <img src={WORLD_IMAGES[0]} alt="About" className="hero-world-img" loading="lazy" decoding="async" />
@@ -199,7 +199,7 @@ export default async function Home() {
           }
         }
 
-        /* ═══ WORLD OF TONET PARIS ═══ */
+        /* ═══ WORLD OF TONET ═══ */
         .hero-world-section {
           background: #fff;
           height: 100vh;
