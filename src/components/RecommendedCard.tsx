@@ -140,11 +140,13 @@ export default function RecommendedCard({ product }: Props) {
           display: flex;
           flex-direction: column;
           gap: 4px;
+          align-items: center;
+          text-align: center;
         }
         .rec-title {
           font-size: 13px;
           font-weight: 500;
-          text-transform: uppercase;
+          text-transform: lowercase;
           letter-spacing: 0.03em;
           line-height: 1.3;
           color: #111;
