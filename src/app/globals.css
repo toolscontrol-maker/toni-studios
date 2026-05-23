@@ -135,8 +135,8 @@
   --t-meta:  10px;  /* metadata / footer */
 
   /* Weights */
-  --w-regular:  400;
-  --w-medium:   500;
+  --w-regular:  300;
+  --w-medium:   400;
 
   /* Tracking */
   --tk-hero:   -0.03em;
