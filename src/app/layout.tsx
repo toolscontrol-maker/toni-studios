@@ -11,6 +11,7 @@ import { LocaleProvider } from "@/context/LocaleContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { AuthProvider } from "@/context/AuthContext";
 import CartDrawer from "@/components/CartDrawer";
+import ShippingBanner from "@/components/ShippingBanner";
 import MenuDrawer from "@/components/MenuDrawer";
 
 const cormorant = Cormorant_Garamond({
@@ -41,19 +42,7 @@ export default function RootLayout({
             <CartProvider>
               <AuthProvider>
               <WishlistProvider>
-                <div style={{
-                  width: '100%',
-                  background: '#000',
-                  borderBottom: 'none',
-                  textAlign: 'center',
-                  padding: '3px 16px',
-                  fontSize: '10px',
-                  fontWeight: 400,
-                  letterSpacing: '0.06em',
-                  color: '#fff',
-                }}>
-                  Free shipping to Spain on all orders
-                </div>
+                <ShippingBanner />
                 <Navbar />
                 <CartDrawer />
                 <MenuDrawer />
