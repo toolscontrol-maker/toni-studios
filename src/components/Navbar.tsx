@@ -127,7 +127,7 @@ export default function Navbar() {
           </div>
 
           <Link href="/" className="acne-logo">
-            <span className="acne-logo-text">TONET<sup>®</sup></span>
+            <span className="acne-logo-text">TONET</span>
           </Link>
 
           {/* RIGHT: Account, Wishlist, Cart */}
