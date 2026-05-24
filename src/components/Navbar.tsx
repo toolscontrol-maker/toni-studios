@@ -368,6 +368,9 @@ export default function Navbar() {
             flex: 1;
             justify-content: flex-start;
           }
+          .acne-nav-right > .acne-nav-links {
+            margin-left: 28px;
+          }
         }
 
         .acne-nav-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
