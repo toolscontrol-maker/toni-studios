@@ -354,6 +354,20 @@ export default function Navbar() {
         @media (min-width: 768px) {
           .acne-mobile-only { display: none !important; }
           .acne-desktop-only { display: flex !important; }
+          .acne-logo {
+            position: static;
+            transform: none;
+            order: -1;
+            margin-right: 24px;
+          }
+          .acne-nav-left {
+            flex: 0 0 auto;
+            justify-content: flex-start;
+          }
+          .acne-nav-right {
+            flex: 1;
+            justify-content: flex-start;
+          }
         }
 
         .acne-nav-right { flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
