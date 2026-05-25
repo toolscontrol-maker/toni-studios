@@ -67,7 +67,7 @@ export default function WishlistClient() {
           max-width: 960px;
           margin: 0 auto;
           padding: 106px 24px 80px;
-          font-family: 'Cormorant Garamond', sans-serif;
+          font-family: var(--font-primary);
           font-size: 11px;
           color: #111;
         }

@@ -155,7 +155,8 @@
 
   /* ── Typography system ─────────────────────────────────── */
   --font-brand: 'Saint Carell', 'Twilight New Moon', serif;
-  --font-primary: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-primary: var(--font-jost), 'Jost', system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
   --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
   --font-ui: var(--font-jost), 'Jost', system-ui, sans-serif;
 

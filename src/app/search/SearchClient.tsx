@@ -72,7 +72,7 @@ export default function SearchClient({ query, products, collections }: Props) {
           max-width: 1200px;
           margin: 0 auto;
           padding: 80px 24px 80px;
-          font-family: 'Cormorant Garamond', sans-serif;
+          font-family: var(--font-primary);
           min-height: 60vh;
         }
         .sr-header {

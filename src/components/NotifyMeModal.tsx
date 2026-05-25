@@ -173,7 +173,7 @@ export default function NotifyMeModal({
           width: min(520px, calc(100vw - 32px));
           max-height: calc(100vh - 48px);
           overflow-y: auto;
-          font-family: 'Cormorant Garamond', sans-serif;
+          font-family: var(--font-primary);
           color: #111;
         }
         .nm-header {
