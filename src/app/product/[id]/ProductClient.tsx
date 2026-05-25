@@ -1248,6 +1248,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           letter-spacing: 0.08em;
           text-transform: uppercase;
         }
+        .ss-accordion-header:focus { outline: none; }
         .ss-accordion-header:hover { opacity: 0.7; }
         .ss-accordion-icon {
           font-size: 18px;
