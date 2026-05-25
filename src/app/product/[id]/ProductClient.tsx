@@ -1261,16 +1261,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-accordion-icon.open { transform: rotate(45deg); }
         .ss-accordion-body {
-          display: grid;
-          grid-template-rows: 0fr;
           overflow: hidden;
-          transition: grid-template-rows 0.28s ease;
+          max-height: 0;
+          transition: max-height 0.32s ease;
         }
         .ss-accordion-body.open {
-          grid-template-rows: 1fr;
+          max-height: 600px;
         }
         .ss-accordion-body-inner {
-          min-height: 0;
           padding-bottom: 16px;
         }
         .ss-accordion-text {
