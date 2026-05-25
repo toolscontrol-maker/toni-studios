@@ -53,18 +53,6 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* Viewport 2: Dual collection blocks */}
-      <section className="hero-dual-section">
-        <Link href="/collection/amazing-super-summer" className="hero-dual-panel">
-          <img src={imgs[0]} alt="Mens" className="hero-dual-img" loading="lazy" decoding="async" />
-          <span className="hero-dual-cta">MENS HIGH SUMMER</span>
-        </Link>
-        <Link href="/collection/hoodie-2" className="hero-dual-panel">
-          <img src={imgs[1]} alt="Womens" className="hero-dual-img" loading="lazy" decoding="async" />
-          <span className="hero-dual-cta">WOMEN&apos;S HIGH SUMMER</span>
-        </Link>
-      </section>
-
       {/* Viewport 2.5: Single collection block */}
       <section className="hero-single-section dark-section">
         <Link href="/collection/spring-summer-2026" className="hero-single-panel">
@@ -150,64 +138,6 @@ export default function HeroSection() {
         @keyframes hero-bounce {
           0%, 100% { transform: translateY(0); opacity: 0.6; }
           50% { transform: translateY(6px); opacity: 1; }
-        }
-
-        /* ═══ VIEWPORT 2: Dual Blocks ═══ */
-        .hero-dual-section {
-          display: flex;
-          gap: 24px;
-          padding: 0 60px;
-          padding-top: 70px;
-          background: #fff;
-          height: 100vh;
-          height: 100dvh;
-          box-sizing: border-box;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .hero-dual-panel {
-          position: relative;
-          overflow: hidden;
-          display: block;
-          text-decoration: none;
-          color: inherit;
-          aspect-ratio: 12 / 16;
-          height: calc(100dvh - 70px - 30px);
-          flex-shrink: 0;
-        }
-        .hero-dual-panel:hover {
-          opacity: 1 !important;
-        }
-
-        .hero-dual-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-        }
-
-        .hero-dual-cta {
-          position: absolute;
-          bottom: 40px;
-          left: 50%;
-          transform: translateX(-50%);
-          padding: 14px 36px;
-          border: 1px solid rgba(255,255,255,0.6);
-          color: #fff;
-          font-family: var(--font-primary);
-          font-size: 12px;
-          font-weight: 400;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          white-space: nowrap;
-          background: transparent;
-          transition: background 0.3s ease, border-color 0.3s ease;
-          z-index: 2;
-        }
-        .hero-dual-panel:hover .hero-dual-cta {
-          background: rgba(0, 0, 0, 0.8);
-          border-color: rgba(255,255,255,0.9);
         }
 
         /* ═══ VIEWPORT 2.5: Single Block ═══ */
@@ -316,13 +246,6 @@ export default function HeroSection() {
 
 
         @media (max-width: 767px) {
-          .hero-dual-section {
-            flex-direction: column;
-            gap: 0;
-            padding: 0;
-            height: calc(2 * 100dvh);
-            align-items: stretch;
-          }
           .hero-triple-section {
             flex-direction: column;
             gap: 0;
@@ -330,7 +253,7 @@ export default function HeroSection() {
             height: calc(3 * 100dvh);
             align-items: stretch;
           }
-          .hero-triple-panel, .hero-dual-panel {
+          .hero-triple-panel {
             aspect-ratio: unset;
             height: 100dvh;
             width: 100%;
@@ -342,7 +265,7 @@ export default function HeroSection() {
             box-sizing: border-box;
             background: #fff;
           }
-          .hero-triple-cta, .hero-dual-cta {
+          .hero-triple-cta {
             bottom: 40px;
           }
         }
