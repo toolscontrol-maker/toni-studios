@@ -120,7 +120,7 @@ export default function MenuDrawer() {
     }
     return () => {
       document.removeEventListener("mousedown", handleClick);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [isMenuOpen, closeMenu]);
 

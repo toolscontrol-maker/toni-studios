@@ -42,8 +42,8 @@ export default function CartDrawer() {
   const items: CartItem[] = cart.lines.map(lineToItem);
 
   useEffect(() => {
-    document.body.style.overflow = isCartOpen ? "hidden" : "unset";
-    return () => { document.body.style.overflow = "unset"; };
+    document.body.style.overflow = isCartOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isCartOpen]);
 
   async function changeQty(id: string, delta: number) {

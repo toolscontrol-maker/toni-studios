@@ -97,12 +97,6 @@ input, textarea, [contenteditable] {
 /* Prevent image and link native drag */
 img, video {
   -webkit-user-drag: none;
-  pointer-events: none;
-}
-
-/* Re-enable pointer events on interactive elements */
-a img, button img, [role="button"] img {
-  pointer-events: auto;
 }
 
 /* Hide scrollbar globally */
@@ -115,6 +109,7 @@ html::-webkit-scrollbar {
 
 body {
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: var(--font-primary);

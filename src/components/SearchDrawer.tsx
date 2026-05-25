@@ -33,7 +33,7 @@ export default function SearchDrawer() {
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [isSearchOpen, closeSearch]);
 
