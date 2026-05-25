@@ -331,7 +331,7 @@ export default function Navbar() {
         .acne-nav-links { display: flex; align-items: center; gap: 28px; }
         .acne-nav-links a {
           font-size: 12px;
-          font-family: var(--font-primary);
+          font-family: var(--font-ui);
           font-weight: 400;
           text-transform: lowercase;
           text-decoration: none;

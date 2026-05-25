@@ -156,6 +156,8 @@
   /* ── Typography system ─────────────────────────────────── */
   --font-brand: 'Saint Carell', 'Twilight New Moon', serif;
   --font-primary: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --font-ui: var(--font-jost), 'Jost', system-ui, sans-serif;
 
   /* Scale */
   --t-hero:  60px;  /* hero display */
@@ -265,6 +267,22 @@ body {
 }
 
 
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+/* Prices, labels, buttons → Jost */
+button,
+[class*="-price"],
+[class*="-cta"],
+[class*="-btn"],
+[class*="-label"],
+[class*="-tag"],
+[class*="-badge"] {
+  font-family: var(--font-ui);
+}
 
 a {
   color: inherit;
