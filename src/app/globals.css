@@ -261,6 +261,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-top: 48px;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 
