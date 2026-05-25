@@ -51,7 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const profile = await authService.getUserById(firebaseUser.uid);
-        setUser(profile);
+        if (profile) {
+          setUser(profile);
+        }
+        // If profile is null the user is mid-registration (Firestore write not yet complete).
+        // handlePostLogin will call setUser once the write finishes — don't override it here.
       } else {
         setUser(null);
       }
