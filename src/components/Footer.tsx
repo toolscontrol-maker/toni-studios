@@ -22,21 +22,20 @@ export default function Footer() {
 
         {/* Col 1: Newsletter + Socials */}
         <div className="ft-col ft-col--wide">
-          <p className="ft-heading">SUSCRÍBETE A NUESTRO BOLETÍN</p>
+          <p className="ft-heading">DISPATCH</p>
           <div className="ft-nl">
             <div className="ft-nl-row">
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="Introduce tu correo electrónico *"
+                placeholder="email"
                 className="ft-nl-input"
               />
-              <button className="ft-nl-btn" aria-label="Suscribirte">→</button>
+              <button className="ft-nl-btn" aria-label="Submit">→</button>
             </div>
             <p className="ft-nl-disclaimer">
-              Al hacer clic en "Suscribirte" confirma que ha leído y entendido nuestra{" "}
-              <Link href="#">Política de Privacidad</Link>.
+              Infrequent. When it matters.
             </p>
           </div>
           <div className="ft-socials">
