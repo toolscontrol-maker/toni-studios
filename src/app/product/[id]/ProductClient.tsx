@@ -770,30 +770,6 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         </div>
       </div>
 
-      {/* ── COMPLETE THE OUTFIT ── */}
-      {completeOutfit.length > 0 && (
-        <section className="rec-section outfit-section">
-          <h2 className="rec-label outfit-label">COMPLETE THE OUTFIT</h2>
-          <div className="rec-carousel-wrap">
-            <div
-              className="rec-carousel"
-              ref={outfitCallbackRef}
-              onPointerDown={outfitPointerDown}
-              onPointerMove={outfitPointerMove}
-              onPointerUp={outfitPointerUp}
-              onPointerCancel={outfitPointerUp}
-              onClick={outfitCarouselClick}
-            >
-              <div style={{flexShrink: 0, width: 16, minWidth: 16}} />
-              {completeOutfit.map((p) => (
-                <div className="rec-carousel-item" key={p.handle}>
-                  <RecommendedCard key={p.handle} product={p} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── RECENTLY VIEWED ── */}
       {recentlyViewed.length > 0 && (
@@ -1405,7 +1381,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             background: #EEEDED;
           }
           .ss-info::-webkit-scrollbar { display: none; }
