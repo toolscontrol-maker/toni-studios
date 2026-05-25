@@ -44,6 +44,7 @@ const REDIRECT_KEY = 'auth_redirect_after_login';
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const router = useRouter();
 
   // Listen to Firebase auth state
@@ -64,20 +65,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   }, []);
 
-  const handlePostLogin = useCallback((u: User, isNew?: boolean) => {
-    setUser(u);
+  // Navigate only after React confirms user is non-null
+  useEffect(() => {
+    if (pendingRedirect && user) {
+      router.push(pendingRedirect);
+      setPendingRedirect(null);
+    }
+  }, [user, pendingRedirect, router]);
 
+  const handlePostLogin = useCallback((u: User, isNew?: boolean) => {
     const redirectUrl = sessionStorage.getItem(REDIRECT_KEY);
     sessionStorage.removeItem(REDIRECT_KEY);
 
+    let target: string;
     if (isNew || !u.onboardingComplete) {
-      router.push('/account/welcome');
+      target = '/account/welcome';
     } else if (redirectUrl) {
-      router.push(redirectUrl);
+      target = redirectUrl;
     } else {
-      router.push('/account');
+      target = '/account';
     }
-  }, [router]);
+
+    setUser(u);
+    setPendingRedirect(target);
+  }, []);
 
   const registerFn = useCallback(async (
     email: string, password: string, firstName: string, lastName: string
