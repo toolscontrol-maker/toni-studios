@@ -120,10 +120,10 @@ export default function Navbar() {
               <Menu size={18} strokeWidth={1} />
             </button>
             <nav className="acne-nav-links acne-desktop-only">
-              <Link href="/collection/new-arrivals" onClick={closeMenu}>novedades</Link>
-              <Link href="/collection/hombre" onClick={closeMenu}>hombre</Link>
-              <Link href="/collection/gifts" onClick={closeMenu}>gifts</Link>
-              <Link href="/collection/explore" onClick={closeMenu}>explore</Link>
+              <Link href="/collection/new-arrivals" onClick={closeMenu}>New Arrivals</Link>
+              <Link href="/collection/hombre" onClick={closeMenu}>Men</Link>
+              <Link href="/collection/gifts" onClick={closeMenu}>Gifts</Link>
+              <Link href="/collection/explore" onClick={closeMenu}>Explore</Link>
             </nav>
           </div>
 
