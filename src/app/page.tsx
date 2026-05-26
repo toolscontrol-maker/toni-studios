@@ -2,236 +2,440 @@ import Link from 'next/link';
 import { getProducts } from '@/lib/shopify';
 import HeroSection from '@/components/HeroSection';
 
-const WORLD_IMAGES = [
-  '/hero/ComfyUI-main_reference_00020_.png',
-  '/hero/ComfyUI-main_reference_00021_.png',
-  '/hero/ComfyUI-main_reference_00022_.png',
-];
-
 export default async function Home() {
   const products = await getProducts();
-  const shuffled = [...products].sort(() => Math.random() - 0.5);
+  const featured = [...products].sort(() => Math.random() - 0.5).slice(0, 3);
 
   return (
     <>
-      {/* ─── HERO: randomized images from /public/hero/ ─── */}
+      {/* ── 1. HERO ── */}
       <HeroSection />
 
-      {/* ─── PRODUCTS SECTION ─── */}
-      <section className="shop-section" id="gallery">
-        <div className="shop-grid">
-          {shuffled.slice(0, 4).map((product) => (
-            <Link key={product.handle} href={`/product/${product.handle}`} className="shop-card">
-              <div className="shop-card-img-wrap">
+      {/* ── 2. MANIFESTO ── */}
+      <section className="tn-mani">
+        <div className="tn-mani-inner">
+          <div className="tn-mani-rule" />
+          <p className="tn-mani-body">
+            TONET exists outside of seasons.<br /><br />
+            Not built for this moment&mdash;<br />
+            built for the century that follows.<br /><br />
+            Garments for those who carry elegance<br />
+            not as aspiration, but as inheritance.
+          </p>
+          <div className="tn-mani-rule" />
+          <p className="tn-mani-sig">TONET PARIS &mdash; EST. MMXXIV</p>
+        </div>
+      </section>
+
+      {/* ── 3. FULLSCREEN EDITORIAL IMAGE ── */}
+      <div className="tn-cinematic">
+        <img
+          src="/hero/ComfyUI-main_reference_00028_.png"
+          alt=""
+          className="tn-cinematic-img"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      {/* ── 4. FEATURED GARMENTS ── */}
+      <section className="tn-garments">
+        <div className="tn-garm-header">
+          <p className="tn-garm-season">Spring &mdash; Summer 2026</p>
+          <h2 className="tn-garm-title">Selected Works</h2>
+        </div>
+        <div className="tn-garm-grid">
+          {featured.map((product) => (
+            <Link key={product.handle} href={`/product/${product.handle}`} className="tn-garm-card">
+              <div className="tn-garm-img-wrap">
                 {product.imageUrl && (
-                  <img src={product.imageUrl} alt={product.title} className="shop-card-img" loading="lazy" decoding="async" />
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
+                    className="tn-garm-img"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 )}
               </div>
-              <div className="shop-card-info">
-                <span className="shop-card-name">{product.title}</span>
-                <span className="shop-card-price">
-                  {(() => { const sym = product.currencyCode === 'USD' ? '$' : '€'; const n = Number(product.price); return `${sym}${Number.isInteger(n) ? n : n.toFixed(2)} ${product.currencyCode}`; })()}
+              <div className="tn-garm-info">
+                <span className="tn-garm-name">{product.title}</span>
+                <span className="tn-garm-price">
+                  {product.currencyCode === 'USD' ? '$' : '€'}
+                  {Number(product.price).toFixed(2)}
                 </span>
               </div>
             </Link>
           ))}
         </div>
+        <Link href="/search" className="tn-garm-all">View All Garments</Link>
       </section>
 
-      {/* ─── WORLD OF TONET ─── */}
-      <section className="hero-world-section">
-        <h2 className="hero-world-title">WORLD OF TONET</h2>
-        <div className="hero-world-grid">
-          <Link href="/about" className="hero-world-panel">
-            <img src={WORLD_IMAGES[0]} alt="About" className="hero-world-img" loading="lazy" decoding="async" />
-            <span className="hero-world-text">ABOUT</span>
+      {/* ── 5. WORLD OF TONET ── */}
+      <section className="tn-world">
+        <p className="tn-world-eyebrow">The World of Tonet</p>
+        <div className="tn-world-grid">
+          <Link href="/about" className="tn-world-panel">
+            <img src="/hero/ComfyUI-main_reference_00016_.png" alt="Archive" className="tn-world-img" loading="lazy" decoding="async" />
+            <div className="tn-world-veil" />
+            <span className="tn-world-label">Archive</span>
           </Link>
-          <Link href="/collections" className="hero-world-panel">
-            <img src={WORLD_IMAGES[1]} alt="Collections" className="hero-world-img" loading="lazy" decoding="async" />
-            <span className="hero-world-text">COLLECTIONS</span>
+          <Link href="/collections" className="tn-world-panel">
+            <img src="/hero/ComfyUI-main_reference_00021_.png" alt="Atelier" className="tn-world-img" loading="lazy" decoding="async" />
+            <div className="tn-world-veil" />
+            <span className="tn-world-label">Atelier</span>
           </Link>
-          <Link href="/stores" className="hero-world-panel">
-            <img src={WORLD_IMAGES[2]} alt="Stores" className="hero-world-img" loading="lazy" decoding="async" />
-            <div className="hero-world-text-group">
-              <span className="hero-world-text" style={{marginBottom: '6px'}}>STORES</span>
-              <span className="hero-world-subtext">STORE LOCATOR</span>
-              <span className="hero-world-subtext">STOCKISTS</span>
-            </div>
+          <Link href="/stores" className="tn-world-panel">
+            <img src="/hero/ComfyUI-main_reference_00023_.png" alt="Presence" className="tn-world-img" loading="lazy" decoding="async" />
+            <div className="tn-world-veil" />
+            <span className="tn-world-label">Presence</span>
           </Link>
         </div>
       </section>
 
+      {/* ── 6. COLLECTION PREVIEW ── */}
+      <section className="tn-season">
+        <Link href="/collection/spring-summer-2026" className="tn-season-card">
+          <img src="/hero/ComfyUI-main_reference_00018_.png" alt="Spring Summer 2026" className="tn-season-img" loading="lazy" decoding="async" />
+          <div className="tn-season-veil" />
+          <div className="tn-season-meta">
+            <p className="tn-season-over">Spring &mdash; Summer</p>
+            <h3 className="tn-season-name">2026</h3>
+            <p className="tn-season-cta">View Collection</p>
+          </div>
+        </Link>
+        <Link href="/collection/amazing-super-summer" className="tn-season-card">
+          <img src="/hero/ComfyUI-main_reference_00032_.png" alt="Essentials" className="tn-season-img" loading="lazy" decoding="async" />
+          <div className="tn-season-veil" />
+          <div className="tn-season-meta">
+            <p className="tn-season-over">Curated Selection</p>
+            <h3 className="tn-season-name">Essentials</h3>
+            <p className="tn-season-cta">View Collection</p>
+          </div>
+        </Link>
+      </section>
+
       <style>{`
-        /* ═══ PRODUCT GRID ═══ */
-        .shop-section {
-          background: #fff;
-          width: 100%;
-        }
-        .shop-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          width: 100%;
-        }
-        .shop-card {
-          display: block;
-          text-decoration: none;
-          color: inherit;
-          position: relative;
-          background: #f5f4f0;
-          overflow: hidden;
-          cursor: pointer;
-        }
-        .shop-card:hover { opacity: 1; }
-        .shop-card-img-wrap {
-          width: 100%;
-          aspect-ratio: 3 / 4;
+        /* ══ MANIFESTO ══ */
+        .tn-mani {
+          background: #0d0d0d;
           display: flex;
           align-items: center;
           justify-content: center;
-          overflow: hidden;
+          padding: 160px 40px;
         }
-        .shop-card-img {
+        .tn-mani-inner {
+          max-width: 520px;
           width: 100%;
-          height: 100%;
-          object-fit: contain;
-          display: block;
-          transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+          text-align: center;
         }
-        .shop-card:hover .shop-card-img { transform: scale(1.03); }
-        .shop-card-info {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 12px 14px 14px;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          gap: 8px;
-          background: linear-gradient(to top, rgba(245,244,240,0.95) 60%, transparent 100%);
-          opacity: 0;
-          transform: translateY(6px);
-          transition: opacity 0.25s ease, transform 0.25s ease;
+        .tn-mani-rule {
+          width: 1px;
+          height: 52px;
+          background: rgba(255,255,255,0.12);
+          margin: 0 auto 60px;
         }
-        .shop-card:hover .shop-card-info {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .shop-card-name {
-          font-size: 11px;
+        .tn-mani-body {
           font-family: var(--font-primary);
+          font-size: 14px;
           font-weight: 300;
-          text-transform: none;
-          letter-spacing: 0.04em;
-          color: #111;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          line-height: 2.4;
+          color: rgba(255,255,255,0.5);
+          letter-spacing: 0.05em;
+          margin: 0 0 60px;
         }
-        .shop-card-price {
-          font-size: 12px;
+        .tn-mani-sig {
           font-family: var(--font-primary);
-          font-weight: 600;
-          color: #111;
-          white-space: nowrap;
-          flex-shrink: 0;
-        }
-        @media (max-width: 1024px) {
-          .shop-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 767px) {
-          .shop-card-info {
-            position: static;
-            opacity: 1;
-            transform: none;
-            background: none;
-            padding: 8px 10px 12px;
-          }
+          font-size: 9px;
+          font-weight: 300;
+          letter-spacing: 0.45em;
+          color: rgba(255,255,255,0.18);
+          text-transform: uppercase;
+          margin: 0;
         }
 
-        /* ═══ WORLD OF TONET ═══ */
-        .hero-world-section {
-          background: #fff;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 80px 40px;
-          box-sizing: border-box;
-        }
-        .hero-world-title {
-          font-family: var(--font-primary);
-          font-size: 13px;
-          font-weight: 400;
-          letter-spacing: 0.14em;
-          margin-bottom: 60px;
-          text-align: center;
-          color: #000;
-          text-transform: uppercase;
-        }
-        .hero-world-grid {
-          display: flex;
-          gap: 40px;
+        /* ══ EDITORIAL CINEMATIC ══ */
+        .tn-cinematic {
           width: 100%;
-          max-width: 1100px;
+          height: 78dvh;
+          overflow: hidden;
+          background: #111;
         }
-        .hero-world-panel {
-          position: relative;
-          flex: 1;
-          aspect-ratio: 1 / 1;
+        .tn-cinematic-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center 20%;
+          display: block;
+          opacity: 0.82;
+        }
+
+        /* ══ FEATURED GARMENTS ══ */
+        .tn-garments {
+          background: #f5f4f0;
+          padding: 120px 80px 100px;
+        }
+        .tn-garm-header {
+          text-align: center;
+          margin-bottom: 72px;
+        }
+        .tn-garm-season {
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.35em;
+          color: #aaa;
+          text-transform: uppercase;
+          margin: 0 0 18px;
+        }
+        .tn-garm-title {
+          font-family: var(--font-primary);
+          font-size: 28px;
+          font-weight: 200;
+          letter-spacing: 0.18em;
+          color: #111;
+          text-transform: uppercase;
+          margin: 0;
+        }
+        .tn-garm-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 3px;
+          max-width: 1280px;
+          margin: 0 auto 72px;
+        }
+        .tn-garm-card {
           display: block;
           text-decoration: none;
           color: inherit;
+          background: #ece9e3;
           overflow: hidden;
         }
-        .hero-world-img {
+        .tn-garm-card:hover { opacity: 1; }
+        .tn-garm-img-wrap {
+          aspect-ratio: 3 / 4;
+          overflow: hidden;
+        }
+        .tn-garm-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
+          transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        .hero-world-panel::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: rgba(0,0,0,0.15);
-          transition: background 0.3s ease;
+        .tn-garm-card:hover .tn-garm-img { transform: scale(1.04); }
+        .tn-garm-info {
+          padding: 18px 22px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          background: #ece9e3;
         }
-        .hero-world-panel:hover::after { background: rgba(0,0,0,0.25); }
-        .hero-world-text, .hero-world-text-group {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 2;
-          color: #fff;
-          text-align: center;
+        .tn-garm-name {
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.14em;
+          color: #444;
+          text-transform: uppercase;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          flex: 1;
+          margin-right: 16px;
         }
-        .hero-world-text {
+        .tn-garm-price {
           font-family: var(--font-primary);
           font-size: 12px;
-          font-weight: 300;
-          letter-spacing: 0.08em;
+          font-weight: 400;
+          color: #111;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
-        .hero-world-text-group {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          width: 100%;
-        }
-        .hero-world-subtext {
+        .tn-garm-all {
+          display: block;
+          text-align: center;
           font-family: var(--font-primary);
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 300;
-          letter-spacing: 0.06em;
+          letter-spacing: 0.35em;
+          color: #888;
+          text-transform: uppercase;
+          text-decoration: none;
+          border-bottom: 1px solid #ccc;
+          padding-bottom: 5px;
+          width: fit-content;
+          margin: 0 auto;
+          transition: color 0.4s, border-color 0.4s;
+        }
+        .tn-garm-all:hover {
+          color: #111;
+          border-color: #888;
+          opacity: 1 !important;
+        }
+
+        /* ══ WORLD OF TONET ══ */
+        .tn-world {
+          background: #0a0a0a;
+          padding-top: 100px;
+        }
+        .tn-world-eyebrow {
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.42em;
+          color: rgba(255,255,255,0.2);
+          text-transform: uppercase;
+          text-align: center;
+          margin: 0 0 64px;
+        }
+        .tn-world-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .tn-world-panel {
+          display: block;
+          position: relative;
+          text-decoration: none;
+          overflow: hidden;
+          aspect-ratio: 2 / 3;
+        }
+        .tn-world-panel:hover { opacity: 1 !important; }
+        .tn-world-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          opacity: 0.65;
+          transition: transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                      opacity 0.6s ease;
+        }
+        .tn-world-panel:hover .tn-world-img {
+          transform: scale(1.04);
+          opacity: 0.8;
+        }
+        .tn-world-veil {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 55%);
+        }
+        .tn-world-label {
+          position: absolute;
+          bottom: 36px;
+          left: 36px;
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.38em;
+          color: rgba(255,255,255,0.45);
+          text-transform: uppercase;
+          z-index: 2;
+          transition: color 0.5s ease;
+        }
+        .tn-world-panel:hover .tn-world-label {
+          color: rgba(255,255,255,0.88);
+        }
+
+        /* ══ COLLECTION PREVIEW ══ */
+        .tn-season {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          background: #0a0a0a;
+          border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .tn-season-card {
+          display: block;
+          position: relative;
+          text-decoration: none;
+          overflow: hidden;
+          height: 100dvh;
+        }
+        .tn-season-card:hover { opacity: 1 !important; }
+        .tn-season-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          opacity: 0.7;
+          transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                      opacity 0.6s ease;
+        }
+        .tn-season-card:hover .tn-season-img {
+          transform: scale(1.03);
+          opacity: 0.85;
+        }
+        .tn-season-veil {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to top,
+            rgba(0,0,0,0.7) 0%,
+            rgba(0,0,0,0.1) 50%,
+            rgba(0,0,0,0.25) 100%
+          );
+          transition: background 0.6s ease;
+        }
+        .tn-season-meta {
+          position: absolute;
+          bottom: 64px;
+          left: 0;
+          right: 0;
+          text-align: center;
+          z-index: 2;
+        }
+        .tn-season-over {
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.38em;
+          color: rgba(255,255,255,0.38);
+          text-transform: uppercase;
+          margin: 0 0 16px;
+        }
+        .tn-season-name {
+          font-family: var(--font-primary);
+          font-size: clamp(32px, 4.5vw, 68px);
+          font-weight: 200;
+          letter-spacing: 0.14em;
+          color: #fff;
+          text-transform: uppercase;
+          margin: 0 0 28px;
+        }
+        .tn-season-cta {
+          display: inline-block;
+          font-family: var(--font-primary);
+          font-size: 9px;
+          font-weight: 300;
+          letter-spacing: 0.42em;
+          color: rgba(255,255,255,0.35);
+          text-transform: uppercase;
+          border-bottom: 1px solid rgba(255,255,255,0.14);
+          padding-bottom: 5px;
+          transition: color 0.5s, border-color 0.5s;
+          margin: 0;
+        }
+        .tn-season-card:hover .tn-season-cta {
+          color: rgba(255,255,255,0.75);
+          border-color: rgba(255,255,255,0.38);
+        }
+
+        /* ══ RESPONSIVE ══ */
+        @media (max-width: 1024px) {
+          .tn-garments { padding: 100px 40px 80px; }
         }
         @media (max-width: 767px) {
-          .hero-world-section {
-            padding: 60px 20px 40px;
-          }
-          .hero-world-title { margin-bottom: 24px; font-size: 18px; flex: none; }
-          .hero-world-grid { flex-direction: column; gap: 12px; flex: 1; height: 0; }
-          .hero-world-panel { aspect-ratio: unset; height: auto; flex: 1; }
+          .tn-mani { padding: 100px 28px; }
+          .tn-mani-body { font-size: 13px; line-height: 2.2; }
+          .tn-cinematic { height: 55dvh; }
+          .tn-garments { padding: 80px 20px 60px; }
+          .tn-garm-grid { grid-template-columns: 1fr; gap: 2px; }
+          .tn-garm-title { font-size: 22px; }
+          .tn-world-grid { grid-template-columns: 1fr; }
+          .tn-world-panel { aspect-ratio: 4 / 3; }
+          .tn-world-label { bottom: 28px; left: 24px; }
+          .tn-season { grid-template-columns: 1fr; }
+          .tn-season-card { height: 80dvh; }
+          .tn-season-meta { bottom: 48px; }
         }
       `}</style>
     </>
