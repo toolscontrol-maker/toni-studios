@@ -547,7 +547,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           {/* Title */}
           <h1 className="ss-title">{product.title}</h1>
 
-          <p className="ss-editorial-subtext">Part of the House Selection.</p>
+          <p className="ss-editorial-subtext">A garment shaped by silence.</p>
 
           {/* Price + variant name on second line */}
           <div className="ss-price-row">
@@ -930,11 +930,11 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
 
         .ss-title {
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 300;
-          line-height: 1.3;
-          margin: 0 0 6px 0;
-          letter-spacing: 0.28em;
+          line-height: 1.4;
+          margin: 0 0 8px 0;
+          letter-spacing: 0.32em;
           text-transform: uppercase;
           text-align: center;
           font-family: var(--font-primary);
@@ -945,9 +945,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           font-weight: 300;
           letter-spacing: 0.5em;
           text-transform: uppercase;
-          color: rgba(0,0,0,0.28);
+          color: rgba(0,0,0,0.32);
           text-align: center;
-          margin: 0 0 24px 0;
+          margin: 0 0 30px 0;
           font-family: var(--font-primary);
         }
         .ss-price-row {
@@ -955,13 +955,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           align-items: baseline;
           justify-content: center;
           gap: 12px;
-          margin-bottom: 24px;
+          margin-bottom: 28px;
         }
         .ss-price {
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 300;
           font-family: var(--font-primary);
-          color: rgba(0,0,0,0.48);
+          color: rgba(0,0,0,0.38);
           white-space: nowrap;
           letter-spacing: 0.12em;
         }
@@ -977,7 +977,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         /* Thumbnails */
         .ss-thumbs-wrap {
           position: relative;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
         .ss-thumbs {
           display: flex;
@@ -985,7 +985,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           overflow-x: auto;
           scrollbar-width: none;
           -ms-overflow-style: none;
-          border: 1px solid #e0e0e0;
+          border: 1px solid rgba(0,0,0,0.08);
           width: fit-content;
           max-width: 100%;
         }
@@ -995,18 +995,18 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           height: 72px;
           padding: 0;
           border: none;
-          border-right: 1px solid #e0e0e0;
+          border-right: 1px solid rgba(0,0,0,0.06);
           border-radius: 0;
           cursor: pointer;
-          background: #fff;
+          background: #EEEDED;
           flex-shrink: 0;
           box-sizing: border-box;
           overflow: hidden;
-          transition: opacity 0.15s;
+          transition: opacity 0.4s;
         }
         .ss-thumb:last-child { border-right: none; }
-        .ss-thumb.active { box-shadow: inset 0 0 0 2px #111; }
-        .ss-thumb:hover:not(.active) { opacity: 0.7; }
+        .ss-thumb.active { box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.7); }
+        .ss-thumb:hover:not(.active) { opacity: 0.6; }
         .ss-thumb img {
           width: 100%;
           height: 100%;
@@ -1031,15 +1031,15 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-thumbs-arrow-left { left: -14px; }
         .ss-thumbs-arrow-right { right: -14px; }
-        .ss-thumbs-arrow:hover { background: #f5f5f5; }
+        .ss-thumbs-arrow:hover { background: rgba(0,0,0,0.04); }
 
         /* Estimated delivery */
         .ss-delivery-estimate {
           font-size: 8px;
           font-family: var(--font-primary);
           font-weight: 300;
-          color: rgba(0,0,0,0.25);
-          margin: 28px 0 0;
+          color: rgba(0,0,0,0.2);
+          margin: 40px 0 0;
           letter-spacing: 0.32em;
           text-align: center;
           text-transform: uppercase;
@@ -1065,25 +1065,26 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-cta-btn {
           width: 100%;
-          height: 52px;
-          background: rgba(0,0,0,0.85);
-          color: rgba(255,255,255,0.9);
+          height: 48px;
+          background: rgba(0,0,0,0.82);
+          color: rgba(255,255,255,0.88);
           border: none;
           border-radius: 0;
           font-family: var(--font-primary);
-          font-size: 9px;
+          font-size: 8px;
           font-weight: 300;
           text-transform: uppercase;
-          letter-spacing: 0.38em;
+          letter-spacing: 0.45em;
+          padding-right: 0.45em;
           cursor: pointer;
-          transition: background 0.5s;
+          transition: background 0.7s;
         }
-        .ss-cta-btn:hover:not(:disabled) { background: rgba(0,0,0,1); }
-        .ss-cta-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .ss-cta-btn:hover:not(:disabled) { background: rgba(0,0,0,0.96); }
+        .ss-cta-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         .ss-bookmark {
           width: 100%;
-          height: 44px;
-          border: 1px solid rgba(0,0,0,0.12);
+          height: 42px;
+          border: 1px solid rgba(0,0,0,0.1);
           background: transparent;
           display: flex;
           align-items: center;
@@ -1091,15 +1092,16 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           gap: 8px;
           cursor: pointer;
           border-radius: 0;
-          transition: background 0.5s, color 0.5s;
+          transition: background 0.7s, color 0.7s, border-color 0.7s;
           font-family: var(--font-primary);
-          font-size: 9px;
+          font-size: 8px;
           font-weight: 300;
           text-transform: uppercase;
-          letter-spacing: 0.32em;
-          color: rgba(0,0,0,0.38);
+          letter-spacing: 0.38em;
+          padding-right: 0.38em;
+          color: rgba(0,0,0,0.35);
         }
-        .ss-bookmark:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.65); }
+        .ss-bookmark:hover { background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.6); border-color: rgba(0,0,0,0.2); }
         .ss-bookmark-label { white-space: nowrap; }
 
         /* ══ SIZE DRAWER ══ */
@@ -1258,23 +1260,26 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         /* Accordion sections */
         .ss-accordions {
-          margin-top: 44px;
+          margin-top: 52px;
         }
         .ss-accordion-item {
           border-bottom: 1px solid rgba(0,0,0,0.07);
+        }
+        .ss-accordion-item:first-child {
+          border-top: 1px solid rgba(0,0,0,0.07);
         }
         .ss-accordion-header {
           width: 100%;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 20px 0;
+          padding: 22px 0;
           background: none;
           border: none;
           font-family: var(--font-primary);
           font-size: 9px;
           font-weight: 300;
-          color: rgba(0,0,0,0.6);
+          color: rgba(0,0,0,0.55);
           cursor: pointer;
           text-align: left;
           letter-spacing: 0.38em;
@@ -1316,24 +1321,25 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         .ss-inline-sizes {
           display: flex;
           flex-wrap: wrap;
-          gap: 6px;
-          margin-bottom: 12px;
+          gap: 8px;
+          margin-bottom: 16px;
         }
         .ss-inline-size {
-          padding: 8px 14px;
+          padding: 10px 18px;
           font-family: var(--font-primary);
-          font-size: 12px;
-          font-weight: 500;
-          border: 1px solid #d0d0d0;
-          background: #fff;
+          font-size: 9px;
+          font-weight: 300;
+          letter-spacing: 0.3em;
+          border: 1px solid rgba(0,0,0,0.1);
+          background: transparent;
           cursor: pointer;
-          color: #111;
+          color: rgba(0,0,0,0.6);
           border-radius: 0;
-          transition: all 0.12s;
+          transition: all 0.4s;
         }
-        .ss-inline-size:hover:not(.sold-out):not(.active) { border-color: #111; }
-        .ss-inline-size.active { background: #111; color: #fff; border-color: #111; }
-        .ss-inline-size.sold-out { color: #ccc; border-color: #eee; cursor: not-allowed; text-decoration: line-through; }
+        .ss-inline-size:hover:not(.sold-out):not(.active) { border-color: rgba(0,0,0,0.4); color: rgba(0,0,0,0.9); }
+        .ss-inline-size.active { background: rgba(0,0,0,0.85); color: rgba(255,255,255,0.9); border-color: transparent; }
+        .ss-inline-size.sold-out { color: rgba(0,0,0,0.18); border-color: rgba(0,0,0,0.05); cursor: not-allowed; text-decoration: line-through; }
 
         /* ── MOBILE STICKY BAR (removed) ── */
         .ss-mobile-sticky {
@@ -1420,7 +1426,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             top: 60px;
             height: calc(100vh - 60px);
             overflow-y: auto;
-            padding: 60px 70px;
+            padding: 72px 72px;
             scrollbar-width: none;
             box-sizing: border-box;
             display: flex;
@@ -1435,8 +1441,19 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         @media (min-width: 1200px) {
           .ss-info {
-            padding: 80px 80px;
+            padding: 96px 96px;
           }
+        }
+
+        /* ── DESKTOP EDITORIAL ALIGNMENT ── */
+        @media (min-width: 768px) {
+          .ss-title,
+          .ss-editorial-subtext,
+          .ss-delivery-estimate { text-align: left; }
+          .ss-price-row { justify-content: flex-start; }
+          .ss-desc-plain { text-align: left; }
+          .ss-actions { margin-top: 36px; }
+          .ss-thumbs-wrap { margin-bottom: 28px; }
         }
 
 
