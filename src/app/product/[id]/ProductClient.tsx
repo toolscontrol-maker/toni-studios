@@ -1348,11 +1348,20 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-get-notified {
           font-size: 8px;
+          font-family: var(--font-primary);
+          font-weight: 300;
           letter-spacing: 0.3em;
           text-transform: uppercase;
           color: rgba(255,255,255,0.35);
           text-decoration: underline;
+          text-underline-offset: 3px;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: color 0.3s;
         }
+        .ss-get-notified:hover { color: rgba(255,255,255,0.65); }
 
         .ss-size-drawer-footer {
           flex-shrink: 0;
