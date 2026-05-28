@@ -310,7 +310,7 @@ export default async function Home() {
         .tn-garm-img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           display: block;
           transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
