@@ -149,7 +149,7 @@ export default function SearchClient({ query, products, collections }: Props) {
         .sr-img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           transition: transform 0.4s ease;
         }
         .sr-card:hover .sr-img { transform: scale(1.03); }
