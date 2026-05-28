@@ -75,6 +75,12 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
   const [adding, setAdding] = useState(false);
   const [sizeOpen, setSizeOpen] = useState(false);
   const [expandedAccordion, setExpandedAccordion] = useState<string | null>(null);
+  const [availModal, setAvailModal] = useState(false);
+  const [availSizes, setAvailSizes] = useState<string[]>([]);
+  const [availEmail, setAvailEmail] = useState('');
+  const [availPhone, setAvailPhone] = useState('');
+  const [availSubmitted, setAvailSubmitted] = useState(false);
+  const [availSubmitting, setAvailSubmitting] = useState(false);
   const { t } = useTranslation();
   useLocale();
   const { toggle, has } = useWishlist();
@@ -468,6 +474,44 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
     return v?.availableForSale ?? false;
   }
 
+  function openAvailModal(preSize?: string) {
+    const soldOut = allSizes.filter(s => !isSizeAvailable(s));
+    setAvailSizes(preSize ? [preSize] : soldOut.length === 1 ? soldOut : []);
+    setAvailEmail('');
+    setAvailPhone('');
+    setAvailSubmitted(false);
+    setAvailSubmitting(false);
+    setAvailModal(true);
+  }
+
+  function toggleAvailSize(size: string) {
+    setAvailSizes(prev =>
+      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+    );
+  }
+
+  async function handleAvailSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!availEmail || availSizes.length === 0) return;
+    setAvailSubmitting(true);
+    try {
+      await fetch('/api/availability-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: product.handle,
+          title: product.title,
+          sizes: availSizes,
+          email: availEmail,
+          phone: availPhone || null,
+        }),
+      }).catch(() => {});
+    } finally {
+      setAvailSubmitted(true);
+      setAvailSubmitting(false);
+    }
+  }
+
   function toggleAccordion(key: string) {
     setExpandedAccordion(prev => prev === key ? null : key);
   }
@@ -754,7 +798,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
                 {!available && (
                   <div className="ss-size-oos-wrap">
                     <span className="ss-sold-out">Reserved</span>
-                    <span className="ss-get-notified">Request Availability</span>
+                    <button className="ss-get-notified" type="button" onClick={(e) => { e.stopPropagation(); openAvailModal(size); }}>Request Availability</button>
                   </div>
                 )}
               </button>
@@ -837,6 +881,96 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             </div>
           </div>
         </section>
+      )}
+
+      {/* ══ AVAILABILITY REQUEST MODAL ══ */}
+      {availModal && (
+        <div className="arm-overlay" onClick={() => setAvailModal(false)}>
+          <div className="arm-modal" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="arm-header">
+              <span className="arm-title">Availability Request</span>
+              <button className="arm-close" onClick={() => setAvailModal(false)} aria-label="Close">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1">
+                  <line x1="1" y1="1" x2="13" y2="13" />
+                  <line x1="13" y1="1" x2="1" y2="13" />
+                </svg>
+              </button>
+            </div>
+
+            {availSubmitted ? (
+              /* ── Success state ── */
+              <div className="arm-success">
+                <span className="arm-success-title">Request registered.</span>
+                <p className="arm-success-sub">You will be contacted if availability changes.</p>
+              </div>
+            ) : (
+              <form className="arm-body" onSubmit={handleAvailSubmit}>
+                <p className="arm-desc">
+                  Receive a notification when selected sizes become available again.
+                </p>
+
+                {/* Size selector */}
+                <div className="arm-field-group">
+                  <span className="arm-field-label">Select Size</span>
+                  <div className="arm-sizes">
+                    {allSizes.filter(s => !isSizeAvailable(s)).map(size => (
+                      <button
+                        key={size}
+                        type="button"
+                        className={`arm-size-pill${availSizes.includes(size) ? ' selected' : ''}`}
+                        onClick={() => toggleAvailSize(size)}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                    {allSizes.filter(s => !isSizeAvailable(s)).length === 0 && (
+                      <span className="arm-no-sizes">All sizes currently available.</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="arm-field">
+                  <label className="arm-field-label" htmlFor="arm-email">Email</label>
+                  <input
+                    id="arm-email"
+                    className="arm-input"
+                    type="email"
+                    required
+                    placeholder="your@email.com"
+                    value={availEmail}
+                    onChange={e => setAvailEmail(e.target.value)}
+                  />
+                </div>
+
+                {/* Phone */}
+                <div className="arm-field">
+                  <label className="arm-field-label" htmlFor="arm-phone">
+                    Phone <span className="arm-optional">(optional)</span>
+                  </label>
+                  <input
+                    id="arm-phone"
+                    className="arm-input"
+                    type="tel"
+                    placeholder="+34 600 000 000"
+                    value={availPhone}
+                    onChange={e => setAvailPhone(e.target.value)}
+                  />
+                </div>
+
+                {/* CTA */}
+                <button
+                  className="arm-cta"
+                  type="submit"
+                  disabled={availSubmitting || availSizes.length === 0 || !availEmail}
+                >
+                  {availSubmitting ? 'Registering…' : 'Submit Request'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
       )}
 
       <style>{`
@@ -1596,6 +1730,196 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             flex: 0 0 83.333vw;
             min-width: 83.333vw;
           }
+        }
+        /* ══ AVAILABILITY REQUEST MODAL ══ */
+        .arm-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 5000;
+          background: rgba(0,0,0,0.72);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          animation: arm-fade-in 0.32s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        @keyframes arm-fade-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        .arm-modal {
+          background: #111;
+          border: 1px solid #222;
+          border-radius: 12px;
+          width: 100%;
+          max-width: 420px;
+          padding: 40px 36px;
+          box-sizing: border-box;
+          animation: arm-slide-in 0.38s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        @keyframes arm-slide-in {
+          from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
+          to   { opacity: 1; transform: translateY(0);   filter: blur(0); }
+        }
+        .arm-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 32px;
+        }
+        .arm-title {
+          font-family: var(--font-primary);
+          font-size: 9px;
+          font-weight: 300;
+          letter-spacing: 0.5em;
+          text-transform: uppercase;
+          padding-right: 0.5em;
+          color: rgba(255,255,255,0.55);
+        }
+        .arm-close {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: rgba(255,255,255,0.28);
+          display: flex;
+          align-items: center;
+          padding: 6px;
+          transition: color 0.3s;
+        }
+        .arm-close:hover { color: rgba(255,255,255,0.7); }
+        .arm-desc {
+          font-family: var(--font-primary);
+          font-size: 11px;
+          font-weight: 300;
+          line-height: 1.85;
+          letter-spacing: 0.02em;
+          color: rgba(255,255,255,0.3);
+          margin: 0 0 36px 0;
+        }
+        .arm-field-group {
+          margin-bottom: 32px;
+        }
+        .arm-field {
+          margin-bottom: 28px;
+        }
+        .arm-field-label {
+          display: block;
+          font-family: var(--font-primary);
+          font-size: 8px;
+          font-weight: 300;
+          letter-spacing: 0.42em;
+          text-transform: uppercase;
+          padding-right: 0.42em;
+          color: rgba(255,255,255,0.22);
+          margin-bottom: 14px;
+        }
+        .arm-optional {
+          letter-spacing: 0;
+          text-transform: none;
+          font-size: 9px;
+          color: rgba(255,255,255,0.14);
+        }
+        .arm-sizes {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .arm-size-pill {
+          padding: 9px 18px;
+          font-family: var(--font-primary);
+          font-size: 9px;
+          font-weight: 300;
+          letter-spacing: 0.3em;
+          padding-right: calc(18px + 0.3em);
+          border: 1px solid rgba(255,255,255,0.14);
+          background: transparent;
+          color: rgba(255,255,255,0.38);
+          border-radius: 0;
+          cursor: pointer;
+          transition: border-color 0.22s, background 0.22s, color 0.22s;
+        }
+        .arm-size-pill:hover {
+          border-color: rgba(255,255,255,0.35);
+          color: rgba(255,255,255,0.65);
+        }
+        .arm-size-pill.selected {
+          border-color: rgba(255,255,255,0.7);
+          background: rgba(255,255,255,0.06);
+          color: rgba(255,255,255,0.88);
+        }
+        .arm-no-sizes {
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          color: rgba(255,255,255,0.2);
+          letter-spacing: 0.04em;
+        }
+        .arm-input {
+          width: 100%;
+          background: transparent;
+          border: none;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+          padding: 0 0 10px 0;
+          font-family: var(--font-primary);
+          font-size: 12px;
+          font-weight: 300;
+          color: rgba(255,255,255,0.7);
+          outline: none;
+          letter-spacing: 0.02em;
+          transition: border-color 0.3s;
+          box-sizing: border-box;
+        }
+        .arm-input::placeholder { color: rgba(255,255,255,0.18); }
+        .arm-input:focus { border-bottom-color: rgba(255,255,255,0.38); }
+        .arm-cta {
+          width: 100%;
+          height: 48px;
+          margin-top: 36px;
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.25);
+          color: rgba(255,255,255,0.65);
+          font-family: var(--font-primary);
+          font-size: 8px;
+          font-weight: 300;
+          letter-spacing: 0.45em;
+          padding-right: 0.45em;
+          text-transform: uppercase;
+          cursor: pointer;
+          border-radius: 0;
+          transition: background 0.5s, color 0.5s, border-color 0.5s;
+        }
+        .arm-cta:hover:not(:disabled) {
+          background: rgba(255,255,255,0.06);
+          border-color: rgba(255,255,255,0.5);
+          color: rgba(255,255,255,0.9);
+        }
+        .arm-cta:disabled { opacity: 0.28; cursor: not-allowed; }
+        .arm-success {
+          text-align: center;
+          padding: 24px 0 8px;
+        }
+        .arm-success-title {
+          display: block;
+          font-family: var(--font-brand);
+          font-size: 22px;
+          font-weight: 300;
+          letter-spacing: 0.04em;
+          color: rgba(255,255,255,0.7);
+          margin-bottom: 18px;
+        }
+        .arm-success-sub {
+          font-family: var(--font-primary);
+          font-size: 10px;
+          font-weight: 300;
+          letter-spacing: 0.04em;
+          line-height: 1.8;
+          color: rgba(255,255,255,0.25);
+          margin: 0;
+        }
+        @media (max-width: 480px) {
+          .arm-modal { padding: 32px 24px; border-radius: 10px; }
         }
       `}</style>
     </>
