@@ -13,6 +13,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import type { User } from '@/lib/auth';
 import * as authService from '@/lib/auth';
 import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 
 // ── Context shape ──────────────────────────────────────────────────
 
@@ -47,26 +48,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const router = useRouter();
 
-  // Listen to Firebase auth state
+  // Listen to both Firebase and Supabase auth state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let active = true;
+
+    const checkLoggedOut = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!auth.currentUser && !session && active) {
+        setUser(null);
+      }
+    };
+
+    // 1. Firebase Auth listener
+    const unsubscribeFirebase = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!active) return;
       if (firebaseUser) {
         try {
           const profile = await authService.getUserById(firebaseUser.uid);
-          if (profile) {
+          if (profile && active) {
             setUser(profile);
           }
         } catch (error) {
-          console.error('[AuthContext] failed to fetch user profile:', error);
+          console.error('[AuthContext] failed to fetch Firebase user profile:', error);
         }
-        // If profile is null the user is mid-registration (Firestore write not yet complete).
-        // handlePostLogin will call setUser once the write finishes — don't override it here.
       } else {
-        setUser(null);
+        await checkLoggedOut();
       }
       setIsLoading(false);
     });
-    return unsubscribe;
+
+    // 2. Supabase Auth listener
+    const { data: { subscription: unsubscribeSupabase } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!active) return;
+      if (session?.user) {
+        try {
+          const profile = await authService.getUserById(session.user.id);
+          if (profile && active) {
+            setUser(profile);
+          }
+        } catch (error) {
+          console.error('[AuthContext] failed to fetch Supabase user profile:', error);
+        }
+      } else {
+        await checkLoggedOut();
+      }
+      setIsLoading(false);
+    });
+
+    return () => {
+      active = false;
+      unsubscribeFirebase();
+      unsubscribeSupabase.unsubscribe();
+    };
   }, []);
 
   // Navigate only after React confirms user is non-null
