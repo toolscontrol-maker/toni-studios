@@ -3,18 +3,18 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim(),
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN?.trim(),
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim(),
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim(),
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID?.trim(),
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID?.trim(),
 };
 
-console.log('[Firebase InitConfig]', {
-  apiKey: firebaseConfig.apiKey ? 'PRESENT' : 'MISSING',
-  projectId: firebaseConfig.projectId,
-  appId: firebaseConfig.appId ? 'PRESENT' : 'MISSING'
+console.log('[Firebase InitConfig Debug]', {
+  apiKey: firebaseConfig.apiKey ? `PRESENT (len: ${firebaseConfig.apiKey.length})` : 'MISSING',
+  projectId: firebaseConfig.projectId ? `"${firebaseConfig.projectId}" (len: ${firebaseConfig.projectId.length})` : 'MISSING',
+  appId: firebaseConfig.appId ? `PRESENT (len: ${firebaseConfig.appId.length})` : 'MISSING'
 });
 
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
