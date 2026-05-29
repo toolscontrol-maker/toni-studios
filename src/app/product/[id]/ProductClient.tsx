@@ -775,7 +775,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
       </div>
 
       {/* ── SIZE DRAWER ── */}
-      <div className={`ss-size-drawer${sizeOpen && hasSizes ? ' open' : ''}`}>
+      <div className={`ss-size-drawer${sizeOpen && hasSizes ? ' open' : ''}${availModal || sizeGuideOpen ? ' dimmed' : ''}`}>
         <div className="ss-size-drawer-header">
           <span className="ss-size-drawer-title">{product.title}</span>
           <div className="ss-size-header-right">
@@ -895,7 +895,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             <div className="arm-header">
               <span className="arm-title">Availability Request</span>
               <button className="arm-close" onClick={() => setAvailModal(false)} aria-label="Close">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1">
                   <line x1="1" y1="1" x2="13" y2="13" />
                   <line x1="13" y1="1" x2="1" y2="13" />
                 </svg>
@@ -985,7 +985,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
             <div className="sg-header">
               <span className="sg-title">Size Information</span>
               <button className="sg-close" onClick={() => setSizeGuideOpen(false)} aria-label="Close">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1">
                   <line x1="1" y1="1" x2="13" y2="13" />
                   <line x1="13" y1="1" x2="1" y2="13" />
                 </svg>
@@ -1300,11 +1300,16 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           display: flex;
           flex-direction: column;
           transform: translateX(100%);
-          transition: transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.95s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), scale 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+          transform-origin: right center;
           font-family: var(--font-primary);
           color: rgba(255,255,255,0.82);
         }
         .ss-size-drawer.open { transform: translateX(0); }
+        .ss-size-drawer.dimmed {
+          opacity: 0.3;
+          scale: 0.995;
+        }
 
         .ss-size-drawer-header {
           display: flex;
@@ -1813,31 +1818,39 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           inset: 0;
           z-index: 5000;
           background: rgba(0,0,0,0.72);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
           padding: 24px;
-          animation: arm-fade-in 0.32s cubic-bezier(0.16,1,0.3,1) forwards;
+          animation: modal-fade-in 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes arm-fade-in {
+        @keyframes modal-fade-in {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
         .arm-modal {
-          background: #111;
-          border: 1px solid #222;
-          border-radius: 12px;
+          background: linear-gradient(
+            180deg,
+            rgba(12,12,12,0.98) 0%,
+            rgba(7,7,7,0.99) 100%
+          );
+          border: 1px solid rgba(255,255,255,0.04);
+          border-radius: 0;
           width: 100%;
-          max-width: 420px;
+          max-width: 440px;
           padding: 40px 36px;
           box-sizing: border-box;
-          animation: arm-slide-in 0.38s cubic-bezier(0.16,1,0.3,1) forwards;
+          margin-top: 18vh;
+          box-shadow:
+            0 0 0 1px rgba(255,255,255,0.02),
+            0 40px 120px rgba(0,0,0,0.65);
+          animation: modal-slide-in 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes arm-slide-in {
-          from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
-          to   { opacity: 1; transform: translateY(0);   filter: blur(0); }
+        @keyframes modal-slide-in {
+          from { opacity: 0; transform: translateY(10px) scale(0.985); filter: blur(4px); }
+          to   { opacity: 1; transform: translateY(0) scale(1);   filter: blur(0); }
         }
         .arm-header {
           display: flex;
@@ -1858,21 +1871,22 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           background: none;
           border: none;
           cursor: pointer;
-          color: rgba(255,255,255,0.28);
+          color: #fff;
+          opacity: 0.35;
           display: flex;
           align-items: center;
           padding: 6px;
-          transition: color 0.3s;
+          transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .arm-close:hover { color: rgba(255,255,255,0.7); }
+        .arm-close:hover { opacity: 0.7; }
         .arm-desc {
           font-family: var(--font-primary);
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 300;
-          line-height: 1.85;
-          letter-spacing: 0.02em;
-          color: rgba(255,255,255,0.3);
-          margin: 0 0 36px 0;
+          line-height: 1.7;
+          letter-spacing: 0.01em;
+          color: rgba(255,255,255,0.24);
+          margin: 0 0 32px 0;
         }
         .arm-field-group {
           margin-bottom: 32px;
@@ -1975,7 +1989,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         .arm-success {
           text-align: center;
           padding: 24px 0 8px;
-          animation: arm-success-appear 0.32s cubic-bezier(0.22,1,0.36,1) forwards;
+          animation: arm-success-appear 350ms cubic-bezier(0.22,1,0.36,1) forwards;
         }
         @keyframes arm-success-appear {
           from { opacity: 0; transform: translateY(6px); }
@@ -1999,9 +2013,6 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           color: rgba(255,255,255,0.22);
           margin: 0;
         }
-        @media (max-width: 480px) {
-          .arm-modal { padding: 32px 24px; border-radius: 10px; }
-        }
 
         /* ══ SIZE GUIDE MODAL ══ */
         .sg-overlay {
@@ -2009,23 +2020,31 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           inset: 0;
           z-index: 5000;
           background: rgba(0,0,0,0.72);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
           padding: 24px;
-          animation: arm-fade-in 0.35s cubic-bezier(0.22,1,0.36,1) forwards;
+          animation: modal-fade-in 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         .sg-modal {
-          background: #111;
-          border: 1px solid #222;
-          border-radius: 12px;
+          background: linear-gradient(
+            180deg,
+            rgba(12,12,12,0.98) 0%,
+            rgba(7,7,7,0.99) 100%
+          );
+          border: 1px solid rgba(255,255,255,0.04);
+          border-radius: 0;
           width: 100%;
-          max-width: 480px;
+          max-width: 440px;
           padding: 40px 36px;
           box-sizing: border-box;
-          animation: arm-slide-in 0.38s cubic-bezier(0.22,1,0.36,1) forwards;
+          margin-top: 18vh;
+          box-shadow:
+            0 0 0 1px rgba(255,255,255,0.02),
+            0 40px 120px rgba(0,0,0,0.65);
+          animation: modal-slide-in 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         .sg-header {
           display: flex;
@@ -2046,21 +2065,22 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           background: none;
           border: none;
           cursor: pointer;
-          color: rgba(255,255,255,0.28);
+          color: #fff;
+          opacity: 0.35;
           display: flex;
           align-items: center;
           padding: 6px;
-          transition: color 0.3s;
+          transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .sg-close:hover { color: rgba(255,255,255,0.7); }
+        .sg-close:hover { opacity: 0.7; }
         .sg-subtext {
           font-family: var(--font-primary);
-          font-size: 11px;
+          font-size: 10px;
           font-weight: 300;
-          line-height: 1.85;
-          letter-spacing: 0.02em;
-          color: rgba(255,255,255,0.26);
-          margin: 0 0 40px 0;
+          line-height: 1.7;
+          letter-spacing: 0.01em;
+          color: rgba(255,255,255,0.24);
+          margin: 0 0 32px 0;
         }
         .sg-table {
           display: flex;
@@ -2070,12 +2090,12 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           display: grid;
           grid-template-columns: 44px 1fr 1fr;
           align-items: center;
-          padding: 18px 0;
-          border-bottom: 1px solid rgba(255,255,255,0.04);
+          padding: 16px 0;
+          border-bottom: 1px solid rgba(255,255,255,0.035);
           gap: 12px;
         }
         .sg-table-row:first-child {
-          border-top: 1px solid rgba(255,255,255,0.04);
+          border-top: 1px solid rgba(255,255,255,0.035);
         }
         .sg-size-label {
           font-family: var(--font-primary);
@@ -2108,21 +2128,23 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           margin: 0;
           font-style: italic;
         }
-        @media (max-width: 480px) {
-          .sg-overlay {
+        @media (max-width: 767px) {
+          .arm-overlay, .sg-overlay {
             align-items: flex-end;
             padding: 0;
           }
-          .sg-modal {
-            border-radius: 16px 16px 0 0;
+          .arm-modal, .sg-modal {
+            margin-top: 0;
+            border-radius: 24px 24px 0 0;
             max-width: 100%;
+            width: 100%;
             padding: 32px 24px 48px;
-            animation: sg-slide-up 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+            animation: modal-slide-up 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
           }
-          @keyframes sg-slide-up {
-            from { opacity: 0.3; transform: translateY(24px); }
-            to   { opacity: 1; transform: translateY(0); }
-          }
+        }
+        @keyframes modal-slide-up {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
         }
       `}</style>
     </>
