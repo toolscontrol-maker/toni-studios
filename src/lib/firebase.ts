@@ -11,6 +11,12 @@ const firebaseConfig = {
   appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+console.log('[Firebase InitConfig]', {
+  apiKey: firebaseConfig.apiKey ? 'PRESENT' : 'MISSING',
+  projectId: firebaseConfig.projectId,
+  appId: firebaseConfig.appId ? 'PRESENT' : 'MISSING'
+});
+
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
