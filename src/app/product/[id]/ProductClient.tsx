@@ -118,7 +118,6 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
   const [selectedSize, setSelectedSize] = useState<string>('');
   const { openCart } = useUI();
   const { addToCart } = useCart();
-  const thumbsRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
@@ -548,12 +547,6 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
     setExpandedAccordion(prev => prev === key ? null : key);
   }
 
-  function scrollThumbs(dir: number) {
-    if (thumbsRef.current) {
-      thumbsRef.current.scrollBy({ left: dir * 120, behavior: 'smooth' });
-    }
-  }
-
   const descriptionFirstLine = product.description?.split(/[.\n]/)[0]?.trim() || '';
 
   const gridImages = images.length > 0
@@ -629,47 +622,44 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           <div className="ss-price-row">
             <span className="ss-price">{priceFormatted}</span>
             {selectedColor ? (
-              <span className="tonet-meta-shade">
-                <span className="tonet-meta-shade-label">SHADE /</span> {selectedColor.toUpperCase()}
+              <span className="ss-subtitle" style={{display:'inline-flex', alignItems:'center', gap: 6}}>
+                <span style={{
+                  display: 'inline-block',
+                  width: 9,
+                  height: 9,
+                  borderRadius: 0,
+                  background: colorNameToCSS(selectedColor),
+                  border: '1px solid rgba(0,0,0,0.15)',
+                  flexShrink: 0,
+                }} />
+                {selectedColor}
               </span>
             ) : descriptionFirstLine ? (
-              <span className="ss-subtitle">{descriptionFirstLine}</span>
+              <span className="ss-subtitle">
+                {descriptionFirstLine}
+              </span>
             ) : null}
           </div>
 
-          {/* TONET GARMENT SHADE SELECTOR */}
+          {/* Refined color/shade selection system */}
           {colorOptions.length > 1 && (
-            <div className="tonet-shade-container">
-              <div className="tonet-shade-metadata">
-                <span className="tonet-shade-label">GARMENT SHADE</span>
-                <span className="tonet-shade-value">
-                  {selectedColor ? selectedColor.toUpperCase() : '—'}
-                  <span className="tonet-shade-status"> — SELECTED</span>
-                </span>
-              </div>
-              <div className="tonet-shades-list">
+            <div className="ss-shade-section">
+              <span className="ss-shade-label">GARMENT SHADE</span>
+              <div className="ss-shade-list">
                 {colorOptions.map((co) => {
-                  const isActive = selectedColor === co.value;
-                  const swatchColor = colorNameToCSS(co.value);
+                  const isSelected = selectedColor === co.value;
                   return (
                     <button
                       key={co.value}
-                      className={`tonet-shade-option ${isActive ? 'active' : ''}`}
+                      className={`ss-shade-option ${isSelected ? 'active' : ''}`}
                       onClick={() => handleColorChange(co.value)}
+                      aria-label={`Select shade ${co.value}`}
                     >
-                      <div className="tonet-shade-visual-wrapper">
-                        {/* Material/Color swatch: clean sharp square */}
-                        <span 
-                          className="tonet-shade-swatch" 
-                          style={{ backgroundColor: swatchColor }} 
-                        />
-                        {co.imageUrl && (
-                          <div className="tonet-archive-plate">
-                            <img src={co.imageUrl} alt={co.value} />
-                          </div>
-                        )}
-                      </div>
-                      <span className="tonet-shade-name-label">{co.value}</span>
+                      <span className="ss-shade-swatch" style={{ background: colorNameToCSS(co.value) }} />
+                      <span className="ss-shade-name">
+                        {co.value.toUpperCase()}
+                        {isSelected && <span className="ss-shade-selected-tag">— SELECTED</span>}
+                      </span>
                     </button>
                   );
                 })}
@@ -1708,135 +1698,85 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           letter-spacing: 0.04em;
         }
 
-        /* TONET SHADE SELECTOR & METADATA */
-        .tonet-meta-shade {
-          font-family: var(--font-primary);
-          font-size: 9px;
-          font-weight: 300;
-          letter-spacing: 0.15em;
-          color: rgba(255, 255, 255, 0.85);
-          text-transform: uppercase;
-        }
-        .tonet-meta-shade-label {
-          color: rgba(255, 255, 255, 0.35);
-          letter-spacing: 0.25em;
-          margin-right: 4px;
-        }
-
-        .tonet-shade-container {
+        /* Refined Shade Selection */
+        .ss-shade-section {
+          margin-top: 10px;
           margin-bottom: 32px;
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
-          padding-top: 20px;
-        }
-        .tonet-shade-metadata {
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          margin-bottom: 14px;
-        }
-        .tonet-shade-label {
           font-family: var(--font-primary);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        @media (min-width: 768px) {
+          .ss-shade-section {
+            align-items: flex-start;
+          }
+        }
+        .ss-shade-label {
+          display: block;
           font-size: 8px;
           font-weight: 300;
           letter-spacing: 0.35em;
-          color: rgba(255, 255, 255, 0.35);
+          color: rgba(0, 0, 0, 0.4);
           text-transform: uppercase;
+          margin-bottom: 16px;
         }
-        .tonet-shade-value {
-          font-family: var(--font-primary);
-          font-size: 8.5px;
-          font-weight: 300;
-          letter-spacing: 0.2em;
-          color: rgba(255, 255, 255, 0.85);
-          text-transform: uppercase;
-        }
-        .tonet-shade-status {
-          color: rgba(255, 255, 255, 0.3);
-          font-size: 7.5px;
-          letter-spacing: 0.1em;
-        }
-        .tonet-shades-list {
+        .ss-shade-list {
           display: flex;
-          flex-wrap: wrap;
-          gap: 24px;
+          flex-direction: column;
+          gap: 12px;
+          align-items: center;
         }
-        .tonet-shade-option {
+        @media (min-width: 768px) {
+          .ss-shade-list {
+            align-items: flex-start;
+          }
+        }
+        .ss-shade-option {
           display: flex;
           align-items: center;
           gap: 10px;
-          background: none;
+          background: transparent;
           border: none;
-          padding: 6px 0;
+          padding: 8px 0;
           cursor: pointer;
-          transition: opacity 0.4s;
-          opacity: 0.55;
-          outline: none;
+          text-align: left;
+          opacity: 0.45;
+          transition: opacity 0.35s ease;
+          width: fit-content;
         }
-        .tonet-shade-option:hover {
+        .ss-shade-option:hover {
           opacity: 0.85;
         }
-        .tonet-shade-option.active {
+        .ss-shade-option.active {
           opacity: 1;
         }
-        .tonet-shade-visual-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          position: relative;
-        }
-        .tonet-shade-swatch {
-          width: 8px;
-          height: 8px;
+        .ss-shade-swatch {
+          width: 9px;
+          height: 9px;
           display: inline-block;
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          box-sizing: border-box;
           flex-shrink: 0;
+          border: 1px solid rgba(0, 0, 0, 0.15);
         }
-        .tonet-archive-plate {
-          width: 20px;
-          height: 26px;
-          overflow: hidden;
-          background: #121212;
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          transition: border-color 0.4s;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .tonet-archive-plate img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          opacity: 0.75;
-          filter: grayscale(30%);
-        }
-        .tonet-shade-option.active .tonet-archive-plate {
-          border-color: rgba(255, 255, 255, 0.35);
-        }
-        .tonet-shade-name-label {
-          font-family: var(--font-primary);
-          font-size: 8.5px;
+        .ss-shade-name {
+          font-size: 9px;
           font-weight: 300;
-          letter-spacing: 0.15em;
-          color: rgba(255, 255, 255, 0.7);
+          letter-spacing: 0.18em;
           text-transform: uppercase;
-          position: relative;
-          padding-bottom: 2px;
+          color: #111111;
+          display: inline-flex;
+          align-items: center;
         }
-        .tonet-shade-name-label::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 1px;
-          background-color: rgba(255, 255, 255, 0.45);
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        .ss-shade-option.active .ss-shade-name {
+          text-decoration: underline;
+          text-underline-offset: 3px;
         }
-        .tonet-shade-option.active .tonet-shade-name-label::after {
-          transform: scaleX(1);
+        .ss-shade-selected-tag {
+          font-size: 8px;
+          letter-spacing: 0.1em;
+          color: rgba(0, 0, 0, 0.3);
+          margin-left: 8px;
+          font-weight: 300;
         }
 
         /* Estimated delivery */
@@ -2312,7 +2252,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           .ss-price-row { justify-content: flex-start; }
           .ss-desc-plain { text-align: left; }
           .ss-actions { margin-top: 36px; }
-          .ss-thumbs-wrap { margin-bottom: 28px; }
+          .ss-shade-section { margin-bottom: 36px; }
         }
 
 
