@@ -463,7 +463,17 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
     if (colorImg) {
       setDisplayImageUrl(colorImg);
       const idx = images.indexOf(colorImg);
-      setActiveImage(idx >= 0 ? idx : 0);
+      const targetIdx = idx >= 0 ? idx : 0;
+      setActiveImage(targetIdx);
+      
+      // Keep mobile carousel in sync
+      if (carouselRef.current) {
+        const slideWidth = carouselRef.current.offsetWidth || window.innerWidth;
+        carouselRef.current.scrollTo({
+          left: targetIdx * slideWidth,
+          behavior: 'smooth'
+        });
+      }
     }
     const next = findVariant(colorValue, selectedSize);
     if (next) {
@@ -618,21 +628,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
           <p className="ss-editorial-subtext">A garment shaped by silence.</p>
 
-          {/* Price + variant name on second line */}
+          {/* Price + selected shade metadata */}
           <div className="ss-price-row">
             <span className="ss-price">{priceFormatted}</span>
             {selectedColor ? (
-              <span className="ss-subtitle" style={{display:'inline-flex', alignItems:'center', gap: 6}}>
-                <span style={{
-                  display: 'inline-block',
-                  width: 9,
-                  height: 9,
-                  borderRadius: 0,
-                  background: colorNameToCSS(selectedColor),
-                  border: '1px solid rgba(0,0,0,0.15)',
-                  flexShrink: 0,
-                }} />
-                {selectedColor}
+              <span className="ss-selected-shade-metadata">
+                <span className="ss-metadata-swatch" style={{ background: colorNameToCSS(selectedColor) }} />
+                <span className="ss-metadata-name">{selectedColor}</span>
               </span>
             ) : descriptionFirstLine ? (
               <span className="ss-subtitle">
@@ -1676,9 +1678,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-price-row {
           display: flex;
-          align-items: baseline;
+          align-items: center;
           justify-content: center;
-          gap: 12px;
+          gap: 16px;
           margin-bottom: 28px;
         }
         .ss-price {
@@ -1687,6 +1689,26 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           font-family: var(--font-primary);
           color: rgba(0,0,0,0.38);
           white-space: nowrap;
+          letter-spacing: 0.12em;
+        }
+        .ss-selected-shade-metadata {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .ss-metadata-swatch {
+          width: 8px;
+          height: 8px;
+          display: inline-block;
+          flex-shrink: 0;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+        .ss-metadata-name {
+          font-size: 10px;
+          font-weight: 300;
+          font-family: var(--font-primary);
+          color: rgba(0, 0, 0, 0.38);
+          text-transform: capitalize;
           letter-spacing: 0.12em;
         }
         .ss-subtitle {
@@ -1700,8 +1722,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         /* Refined Shade Selection */
         .ss-shade-section {
-          margin-top: 10px;
-          margin-bottom: 32px;
+          margin-top: 24px;
+          margin-bottom: 40px;
           font-family: var(--font-primary);
           display: flex;
           flex-direction: column;
@@ -1714,17 +1736,17 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
         .ss-shade-label {
           display: block;
-          font-size: 8px;
-          font-weight: 300;
-          letter-spacing: 0.35em;
-          color: rgba(0, 0, 0, 0.4);
+          font-size: 9px;
+          font-weight: 400;
+          letter-spacing: 0.4em;
+          color: rgba(0, 0, 0, 0.45);
           text-transform: uppercase;
-          margin-bottom: 16px;
+          margin-bottom: 20px;
         }
         .ss-shade-list {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 16px;
           align-items: center;
         }
         @media (min-width: 768px) {
@@ -1735,14 +1757,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         .ss-shade-option {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
           background: transparent;
           border: none;
-          padding: 8px 0;
+          padding: 10px 0;
           cursor: pointer;
           text-align: left;
-          opacity: 0.45;
-          transition: opacity 0.35s ease;
+          opacity: 0.35;
+          transition: opacity 0.25s ease;
           width: fit-content;
         }
         .ss-shade-option:hover {
@@ -1752,30 +1774,37 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           opacity: 1;
         }
         .ss-shade-swatch {
-          width: 9px;
-          height: 9px;
+          width: 10px;
+          height: 10px;
           display: inline-block;
           flex-shrink: 0;
           border: 1px solid rgba(0, 0, 0, 0.15);
+          transition: border-color 0.25s ease;
+        }
+        .ss-shade-option.active .ss-shade-swatch {
+          border-color: rgba(0, 0, 0, 0.8);
         }
         .ss-shade-name {
-          font-size: 9px;
+          font-size: 10px;
           font-weight: 300;
-          letter-spacing: 0.18em;
+          letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #111111;
           display: inline-flex;
           align-items: center;
+          transition: font-weight 0.25s ease;
         }
         .ss-shade-option.active .ss-shade-name {
+          font-weight: 400;
           text-decoration: underline;
-          text-underline-offset: 3px;
+          text-underline-offset: 4px;
+          text-decoration-thickness: 1px;
         }
         .ss-shade-selected-tag {
           font-size: 8px;
-          letter-spacing: 0.1em;
-          color: rgba(0, 0, 0, 0.3);
-          margin-left: 8px;
+          letter-spacing: 0.15em;
+          color: rgba(0, 0, 0, 0.35);
+          margin-left: 10px;
           font-weight: 300;
         }
 
