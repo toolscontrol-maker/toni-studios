@@ -693,7 +693,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
                 }
               }}
             >
-              {inWishlist ? 'Archived' : 'Add to Archive'}
+              {inWishlist ? 'ARCHIVED · 48H' : 'ADD TO ARCHIVE'}
             </button>
           </div>
 
@@ -1123,7 +1123,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
                 <div className="ac-avail-section">
                   <span className="ac-section-label">Archive Availability</span>
                   <p className="ac-avail-desc">
-                    This garment remains available for acquisition while inventory permits.
+                    This garment remains temporarily preserved inside the House for private consideration.
                   </p>
 
                   <div className="ac-avail-status-block">
@@ -1137,21 +1137,30 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
                     <div className="ac-status-row">
                       <span className="ac-status-label">Estimated Window</span>
                       <span className="ac-status-value">
-                        {product.variants.some(v => v.availableForSale) ? 'APPROXIMATELY 12 DAYS REMAINING' : 'CLOSED'}
+                        {product.variants.some(v => v.availableForSale) ? '48H ACTIVE PRESERVATION' : 'PERMANENTLY RETAINED'}
                       </span>
                     </div>
 
-                    {product.variants.some(v => v.availableForSale) && (
+                    {product.variants.some(v => v.availableForSale) ? (
                       <div className="ac-timeline-wrap">
-                        <span className="ac-timeline-label">Preservation Window Timeline</span>
-                        <div className="ac-timeline">
-                          {[...Array(14)].map((_, i) => (
-                            <div key={i} className={`ac-timeline-tick ${i < 12 ? 'active' : ''}`} />
-                          ))}
+                        <span className="ac-timeline-label">PRESERVATION STATUS · ACTIVE 48H WINDOW</span>
+                        <div className="ac-active-bar-container">
+                          <div className="ac-active-bar-fill" />
                         </div>
                         <div className="ac-timeline-footer">
-                          <span>Today</span>
-                          <span>12 June 2026</span>
+                          <span>Preserved</span>
+                          <span>Auto-Release in 48h</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="ac-timeline-wrap">
+                        <span className="ac-timeline-label">PRESERVATION STATUS · PERMANENT ARCHIVE</span>
+                        <div className="ac-active-bar-container ac-active-bar-container--permanent">
+                          <div className="ac-active-bar-fill ac-active-bar-fill--permanent" />
+                        </div>
+                        <div className="ac-timeline-footer">
+                          <span>Historical Record Only</span>
+                          <span>Acquisition Inactive</span>
                         </div>
                       </div>
                     )}
@@ -1192,9 +1201,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         .ac-overlay {
           position: fixed;
           top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(12, 12, 12, 0.96);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
+          background: rgba(12, 12, 12, 0.93); /* overlay background remaining 90-95% */
+          backdrop-filter: blur(12px); /* soft blur on background */
+          -webkit-backdrop-filter: blur(12px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1217,8 +1226,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           gap: 32px;
           box-sizing: border-box;
           opacity: 0;
-          transform: translateY(20px);
-          animation: ac-slide-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+          transform: translateY(16px);
+          animation: ac-slide-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* cinematic fade + translateY */
         }
 
         .ac-close {
@@ -1245,6 +1254,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           gap: 8px;
           border-bottom: 1px solid rgba(243, 240, 234, 0.05);
           padding-bottom: 24px;
+          opacity: 0;
+          animation: ac-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards; /* sequential fade */
         }
 
         .ac-supra {
@@ -1257,19 +1268,19 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
         .ac-title {
           font-family: var(--font-brand);
-          font-size: clamp(20px, 3.5vw, 26px);
+          font-size: clamp(18px, 3vw, 24px); /* prominent but refined */
           font-weight: 300;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.1em;
           color: rgba(255, 255, 255, 0.85);
           margin: 0;
         }
 
         .ac-desc {
-          font-size: 10px;
+          font-size: 9.5px; /* small, muted editorial tone */
           font-weight: 300;
           letter-spacing: 0.06em;
           line-height: 1.6;
-          color: rgba(255, 255, 255, 0.4);
+          color: rgba(255, 255, 255, 0.35);
           margin: 0;
           max-width: 600px;
         }
@@ -1291,7 +1302,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           border: 1px solid rgba(243, 240, 234, 0.04);
           opacity: 0;
           transform: scale(0.97);
-          animation: ac-img-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+          animation: ac-img-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.48s forwards; /* garment image appears last */
         }
 
         .ac-garment-img {
@@ -1309,6 +1320,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           display: flex;
           flex-direction: column;
           gap: 24px;
+          opacity: 0;
+          animation: ac-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards; /* sequential fade */
         }
 
         .ac-tech-grid {
@@ -1327,19 +1340,19 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           font-size: 7px;
           font-weight: 300;
           text-transform: uppercase;
-          letter-spacing: 0.25em;
-          color: rgba(255, 255, 255, 0.3);
+          letter-spacing: 0.3em; /* high letter spacing */
+          color: rgba(255, 255, 255, 0.25);
         }
 
         .ac-tech-value {
-          font-size: 10px;
+          font-size: 9.5px; /* thin typography */
           font-weight: 300;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.08em;
           color: rgba(255, 255, 255, 0.65);
         }
         .ac-tech-value--name {
           font-family: var(--font-brand);
-          letter-spacing: 0.08em;
+          letter-spacing: 0.1em;
           color: rgba(255, 255, 255, 0.8);
         }
         .ac-tech-value--ref {
@@ -1416,8 +1429,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           color: rgba(255, 255, 255, 0.7);
         }
         .ac-status-value--closed {
-          color: #db4437;
-          opacity: 0.8;
+          color: rgba(255, 255, 255, 0.35); /* quiet monochromatic gray (no red alerts or retail colors) */
         }
 
         .ac-timeline-wrap {
@@ -1435,28 +1447,34 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           color: rgba(255, 255, 255, 0.25);
         }
 
-        .ac-timeline {
-          display: flex;
-          gap: 3px;
+        /* Monochromatic thin Visual Timeline Bar */
+        .ac-active-bar-container {
           width: 100%;
-          margin: 4px 0;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.08);
+          position: relative;
+          margin: 6px 0;
         }
-
-        .ac-timeline-tick {
-          flex: 1;
-          height: 3px;
-          background: rgba(255, 255, 255, 0.05);
+        .ac-active-bar-fill {
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 65%;
+          background: rgba(255, 255, 255, 0.35);
         }
-        .ac-timeline-tick.active {
-          background: rgba(255, 255, 255, 0.25);
+        .ac-active-bar-container--permanent {
+          background: rgba(255, 255, 255, 0.03);
+        }
+        .ac-active-bar-fill--permanent {
+          width: 100%;
+          background: rgba(255, 255, 255, 0.1);
         }
 
         .ac-timeline-footer {
           display: flex;
           justify-content: space-between;
-          font-size: 6px;
+          font-size: 6.5px;
           font-weight: 300;
-          letter-spacing: 0.1em;
+          letter-spacing: 0.12em;
           color: rgba(255, 255, 255, 0.2);
           text-transform: uppercase;
         }
@@ -1468,11 +1486,11 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
         }
 
         .ac-notes-text {
-          font-size: 9px;
+          font-size: 8.5px; /* clearly separated, highly subtle house notes */
           font-weight: 300;
           letter-spacing: 0.06em;
-          line-height: 1.6;
-          color: rgba(255, 255, 255, 0.3);
+          line-height: 1.7;
+          color: rgba(255, 255, 255, 0.28);
           margin: 0;
         }
 
@@ -1482,12 +1500,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           border-top: 1px solid rgba(243, 240, 234, 0.05);
           padding-top: 24px;
           margin-top: 12px;
+          opacity: 0;
+          animation: ac-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.36s forwards; /* sequential fade */
         }
 
         .ac-btn-primary {
           flex: 1;
           background: transparent;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.15); /* restrained primary border */
           text-align: center;
           text-decoration: none;
           padding: 14px;
@@ -1495,32 +1515,33 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           font-weight: 300;
           text-transform: uppercase;
           letter-spacing: 0.3em;
-          color: rgba(255, 255, 255, 0.85);
+          color: rgba(255, 255, 255, 0.7);
           cursor: pointer;
-          transition: border-color 0.4s, color 0.4s, background 0.4s;
+          transition: border-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1), background 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* slow and atmospheric */
         }
         .ac-btn-primary:hover {
-          border-color: rgba(255, 255, 255, 0.6);
+          border-color: rgba(255, 255, 255, 0.45);
           color: #ffffff;
-          background: rgba(255, 255, 255, 0.02);
+          background: rgba(255, 255, 255, 0.015);
         }
 
         .ac-btn-secondary {
           flex: 1.2;
           background: transparent;
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.05); /* restrained secondary border */
           padding: 14px;
           font-size: 9px;
           font-weight: 300;
           text-transform: uppercase;
           letter-spacing: 0.3em;
-          color: rgba(255, 255, 255, 0.45);
+          color: rgba(255, 255, 255, 0.35);
           cursor: pointer;
-          transition: border-color 0.4s, color 0.4s;
+          transition: border-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1), background 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* slow and atmospheric */
         }
         .ac-btn-secondary:hover {
-          border-color: rgba(255, 255, 255, 0.2);
-          color: rgba(255, 255, 255, 0.85);
+          border-color: rgba(255, 255, 255, 0.15);
+          color: rgba(255, 255, 255, 0.7);
+          background: rgba(255, 255, 255, 0.005);
         }
 
         /* ── ANIMATIONS ── */
@@ -1876,7 +1897,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           transition: color 0.5s;
         }
         .ss-archive-btn:hover { color: rgba(0,0,0,0.6); }
-        .ss-archive-btn--in { color: rgba(0,0,0,0.5); }
+        .ss-archive-btn--in {
+          color: rgba(0,0,0,0.22); /* quiet, thin, editorial, reduced opacity (~10%) to feel informational and quiet */
+        }
         .ss-archive-toast {
           display: flex;
           flex-direction: column;
