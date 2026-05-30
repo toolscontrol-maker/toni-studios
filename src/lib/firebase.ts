@@ -17,7 +17,20 @@ console.log('[Firebase InitConfig Debug]', {
   appId: firebaseConfig.appId ? `PRESENT (len: ${firebaseConfig.appId.length})` : 'MISSING'
 });
 
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const isConfigValid = firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId;
+
+const app = getApps().length 
+  ? getApps()[0] 
+  : initializeApp(
+      isConfigValid 
+        ? firebaseConfig 
+        : {
+            apiKey: "mock-api-key-for-build-purposes-only",
+            authDomain: "mock-auth-domain",
+            projectId: "tonet-paris",
+            appId: "mock-app-id"
+          }
+    );
 
 export const auth = getAuth(app);
 export const db   = getFirestore(app);
