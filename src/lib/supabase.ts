@@ -1,7 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || 'https://placeholder-project-for-build.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() || 'placeholder-key-for-build';
+const urlEnv = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() || '';
+const keyEnv = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() || '';
+
+const supabaseUrl = (urlEnv && urlEnv !== 'undefined' && urlEnv !== 'null') 
+  ? urlEnv 
+  : 'https://placeholder-project-for-build.supabase.co';
+
+const supabaseAnonKey = (keyEnv && keyEnv !== 'undefined' && keyEnv !== 'null') 
+  ? keyEnv 
+  : 'placeholder-key-for-build';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
