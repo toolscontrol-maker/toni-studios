@@ -67,15 +67,22 @@ export default function ShippingBanner() {
   return (
     <div style={{
       width: "100%",
-      background: "#000",
-      textAlign: "center",
-      padding: "3px 16px",
-      fontSize: "10px",
-      fontWeight: 400,
-      letterSpacing: "0.06em",
-      color: "#fff",
+      height: "22px",
+      background: "#0b0b0b",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: "7.5px",
+      fontWeight: 300,
+      letterSpacing: "0.45em",
+      color: "rgba(255, 255, 255, 0.45)",
+      textTransform: "uppercase",
+      fontFamily: "var(--font-primary), sans-serif",
+      borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+      paddingLeft: "0.45em",
+      boxSizing: "border-box",
     }}>
-      Free shipping to {country} on all orders
+      Complimentary shipping to {country}
     </div>
   );
 }
