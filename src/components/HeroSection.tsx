@@ -30,7 +30,7 @@ export default function HeroSection() {
           Structure.<br />
           Status.
         </h1>
-        <Link href="/collection/spring-summer-2026" className="tn-hero-cta">
+        <Link href="/collection/i9nm9inm" className="tn-hero-cta">
           The Collection
         </Link>
       </div>

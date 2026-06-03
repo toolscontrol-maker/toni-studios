@@ -141,7 +141,7 @@ function normalizeProduct(node: Record<string, any>): Product {
 
 export async function getProducts(): Promise<Product[]> {
   const data = await shopifyFetch<{ products: { edges: { node: Record<string, any> }[] } }>(
-    `query GetProducts { products(first: 250) { edges { node { ${PRODUCT_FIELDS} } } } }`
+    `query GetProducts { products(first: 250, query: "available_for_sale:true") { edges { node { ${PRODUCT_FIELDS} } } } }`
   );
   return data.products.edges.map(e => normalizeProduct(e.node));
 }
@@ -203,7 +203,7 @@ export async function getCollection(handle: string): Promise<CollectionDetail | 
         title
         description
         image { url }
-        products(first: 30) {
+        products(first: 250) {
           edges { node { ${COLLECTION_PRODUCT_FIELDS} } }
         }
       }
@@ -212,15 +212,24 @@ export async function getCollection(handle: string): Promise<CollectionDetail | 
   );
   if (!data.collectionByHandle) return null;
   const node = data.collectionByHandle;
+
+  let products = ((node.products?.edges ?? []) as { node: Record<string, any> }[]).map(e =>
+    normalizeProduct(e.node)
+  );
+
+  // If the collection exists but has no products assigned in Shopify admin,
+  // fall back to showing all available products so the page is never empty.
+  if (products.length === 0) {
+    products = await getProducts();
+  }
+
   return {
     id: node.id as string,
     handle: node.handle as string,
     title: node.title as string,
     description: (node.description as string) ?? '',
     imageUrl: (node.image?.url as string) ?? '',
-    products: ((node.products?.edges ?? []) as { node: Record<string, any> }[]).map(e =>
-      normalizeProduct(e.node)
-    ),
+    products,
   };
 }
 
@@ -248,7 +257,7 @@ export async function getRecommendedProducts(
   const [productsData, collectionsData] = await Promise.all([
     shopifyFetch<{ products: { edges: { node: Record<string, any> }[] } }>(
       `query GetRecommended($first: Int!) {
-        products(first: $first) {
+        products(first: $first, query: "available_for_sale:true") {
           edges {
             node {
               handle

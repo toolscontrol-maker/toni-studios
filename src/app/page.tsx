@@ -139,7 +139,7 @@ export default async function Home() {
 
       {/* ── 6. COLLECTION PREVIEW ── */}
       <section className="tn-season">
-        <Link href="/collection/spring-summer-2026" className="tn-season-card">
+        <Link href="/collection/i9nm9inm" className="tn-season-card">
           <img src="/hero/ComfyUI-main_reference_00018_.png" alt="Spring Summer 2026" className="tn-season-img" loading="lazy" decoding="async" />
           <div className="tn-season-veil" />
           <div className="tn-season-meta">
@@ -148,7 +148,7 @@ export default async function Home() {
             <p className="tn-season-cta">Enter</p>
           </div>
         </Link>
-        <Link href="/collection/amazing-super-summer" className="tn-season-card">
+        <Link href="/collection/summer-ttes-2" className="tn-season-card">
           <img src="/hero/ComfyUI-main_reference_00032_.png" alt="Essentials" className="tn-season-img" loading="lazy" decoding="async" />
           <div className="tn-season-veil" />
           <div className="tn-season-meta">

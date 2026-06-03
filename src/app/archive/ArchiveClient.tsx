@@ -275,12 +275,12 @@ export default function ArchiveClient() {
                 <div className="ar-reg-item">
                   <h3 className="ar-reg-title">PERMANENCE</h3>
                   <p className="ar-reg-desc">The core collection. Pieces designed to transcend seasonality.</p>
-                  <Link href="/collection/permanence" className="ar-cta-link">Explore Collection</Link>
+                  <Link href="/collection/hoodie-1" className="ar-cta-link">Explore Collection</Link>
                 </div>
                 <div className="ar-reg-item">
                   <h3 className="ar-reg-title">SS26 — VOL I</h3>
                   <p className="ar-reg-desc">Initial ready-to-wear explorations in restrained tones.</p>
-                  <Link href="/collection/ss26" className="ar-cta-link">View Notes</Link>
+                  <Link href="/collection/summer-ttes-2" className="ar-cta-link">View Notes</Link>
                 </div>
               </div>
             </div>
