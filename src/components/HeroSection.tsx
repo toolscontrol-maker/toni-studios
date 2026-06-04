@@ -7,7 +7,7 @@ const SLIDES = [
   {
     image: '/hero/ComfyUI-main_reference_00028_.png',
     eyebrow: 'SS — MMXXVI',
-    lines: ['SILENCE.', 'STRUCTURE.', 'STATUS.'],
+    lines: ['SILENCE.', 'STRUCTURE.', 'PERMANENCE.'],
   },
   {
     image: '/hero/ComfyUI-main_reference_00016_.png',

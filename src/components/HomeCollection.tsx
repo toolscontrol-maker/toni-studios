@@ -69,6 +69,7 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
             FOR HER
           </button>
         </div>
+        <p className="hc-editorial-sub">Curated for permanence</p>
       </div>
 
       <div className="hc-grid">
@@ -156,6 +157,16 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           display: inline-flex;
           align-items: center;
           gap: 28px;
+          margin-bottom: 24px;
+        }
+        .hc-editorial-sub {
+          font-family: var(--font-primary);
+          font-size: 11px;
+          font-weight: 300;
+          letter-spacing: 0.14em;
+          color: rgba(255,255,255,0.35);
+          text-transform: uppercase;
+          margin: 0;
         }
         .hc-tab {
           font-family: var(--font-primary);
@@ -256,6 +267,10 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           border-radius: 50%;
           border: 1px solid rgba(255,255,255,0.15);
           flex-shrink: 0;
+          transition: border-color 0.4s ease;
+        }
+        .hc-swatch:hover {
+          border-color: rgba(255,255,255,0.6);
         }
         .hc-sizes {
           display: flex;
@@ -273,6 +288,11 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           padding: 3px 7px;
           line-height: 1;
           text-transform: uppercase;
+          transition: border-color 0.4s ease, color 0.4s ease;
+        }
+        .hc-size:hover {
+          border-color: rgba(255,255,255,0.4);
+          color: #fff;
         }
         .hc-all {
           display: block;

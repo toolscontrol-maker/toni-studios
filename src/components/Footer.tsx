@@ -14,7 +14,7 @@ export default function Footer() {
 
         {/* Left: Newsletter + Socials */}
         <div className="ft-left">
-          <p className="ft-nl-label">PRIVATE RELEASES</p>
+          <p className="ft-nl-label">Enter the Private Circle.</p>
           <div className="ft-nl">
             <div className="ft-nl-row">
               <input
@@ -106,10 +106,10 @@ export default function Footer() {
           flex-direction: column;
         }
         .ft-nl-label {
-          font-size: 10px;
-          font-weight: 400;
-          letter-spacing: 0.22em;
-          color: #333333;
+          font-size: 11px;
+          font-weight: 300;
+          letter-spacing: 0.32em;
+          color: rgba(255,255,255,0.45);
           margin: 0 0 56px;
           text-transform: uppercase;
         }
