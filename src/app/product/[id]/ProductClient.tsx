@@ -166,9 +166,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
     }
     const idx = hash % notes.length;
     return [
-      notes[idx % notes.length],
-      notes[(idx + 1) % notes.length],
-      notes[(idx + 3) % notes.length]
+      notes[idx % notes.length]
     ];
   }, [product.title]);
 
