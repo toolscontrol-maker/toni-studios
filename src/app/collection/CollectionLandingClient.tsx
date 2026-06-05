@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Product } from '@/lib/shopify';
 
@@ -35,6 +35,24 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
   const [sortKey, setSortKey] = useState<'default' | 'price-asc' | 'price-desc'>('default');
 
   const allGarmentsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
+    );
+
+    const elements = document.querySelectorAll('.tc-fade-in');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   // SECTION 3 & 4 CTA actions: scroll to all garments and apply gender filter
   const filterAndScroll = (filter: 'him' | 'her') => {
@@ -103,7 +121,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         <img
           src="/hero/ComfyUI-main_reference_00028_.png"
           alt="The Collection Campaign"
-          className="tc-hero-img"
+          className="tc-hero-img tc-fade-in"
           draggable={false}
         />
         <div className="tc-hero-overlay" />
@@ -135,7 +153,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           <img
             src="/hero/ComfyUI-main_reference_00021_.png"
             alt="Tonet For Him"
-            className="tc-gender-img"
+            className="tc-gender-img tc-fade-in"
             loading="lazy"
             decoding="async"
           />
@@ -156,7 +174,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           <img
             src="/hero/ComfyUI-main_reference_00017_.png"
             alt="Tonet For Her"
-            className="tc-gender-img"
+            className="tc-gender-img tc-fade-in"
             loading="lazy"
             decoding="async"
           />
@@ -190,7 +208,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
                     <img
                       src={product.imageUrl}
                       alt={product.title}
-                      className="tc-f-img"
+                      className="tc-f-img tc-fade-in"
                       loading="lazy"
                       decoding="async"
                     />
@@ -238,7 +256,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
 
         <div className="tc-moodboard">
           <div className="tc-mood-item tc-mood-large">
-            <div className="tc-mood-color" style={{ background: '#090909' }} />
+            <div className="tc-mood-color tc-fade-in" style={{ background: '#090909' }} />
             <div className="tc-mood-desc">
               <p className="tc-mood-tag">STUDY 01</p>
               <h3 className="tc-mood-title">COAL BLACK</h3>
@@ -247,7 +265,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           </div>
           
           <div className="tc-mood-item tc-mood-mid">
-            <div className="tc-mood-color" style={{ background: '#eae9e4' }} />
+            <div className="tc-mood-color tc-fade-in" style={{ background: '#eae9e4' }} />
             <div className="tc-mood-desc">
               <p className="tc-mood-tag">STUDY 02</p>
               <h3 className="tc-mood-title">ALABASTER</h3>
@@ -256,7 +274,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           </div>
 
           <div className="tc-mood-item">
-            <div className="tc-mood-color" style={{ background: '#736357' }} />
+            <div className="tc-mood-color tc-fade-in" style={{ background: '#736357' }} />
             <div className="tc-mood-desc">
               <p className="tc-mood-tag">STUDY 03</p>
               <h3 className="tc-mood-title">RAW CLAY</h3>
@@ -265,7 +283,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           </div>
 
           <div className="tc-mood-item">
-            <div className="tc-mood-color" style={{ background: '#424242' }} />
+            <div className="tc-mood-color tc-fade-in" style={{ background: '#424242' }} />
             <div className="tc-mood-desc">
               <p className="tc-mood-tag">STUDY 04</p>
               <h3 className="tc-mood-title">SHADOW GRAY</h3>
@@ -328,7 +346,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
                       <img
                         src={product.imageUrl}
                         alt={product.title}
-                        className="tc-card-img"
+                        className="tc-card-img tc-fade-in"
                         loading="lazy"
                         decoding="async"
                       />
@@ -379,6 +397,34 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           background: #0d0d0d;
           color: #ffffff;
           overflow: hidden;
+        }
+
+        /* ── GLOBAL FADE IN SCROLL EFFECT ── */
+        .tc-fade-in {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1), transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, transform;
+        }
+        .tc-hero-img.tc-fade-in.visible {
+          opacity: 0.55;
+          transform: translateY(0);
+        }
+        .tc-gender-img.tc-fade-in.visible {
+          opacity: 0.5;
+          transform: translateY(0);
+        }
+        .tc-f-img.tc-fade-in.visible {
+          opacity: 0.75;
+          transform: translateY(0);
+        }
+        .tc-card-img.tc-fade-in.visible {
+          opacity: 0.75;
+          transform: translateY(0);
+        }
+        .tc-mood-color.tc-fade-in.visible {
+          opacity: 0.85;
+          transform: translateY(0);
         }
 
         /* ── SECTION 1: HERO ── */
@@ -460,7 +506,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
 
         /* ── SECTION 2: EDITORIAL STATEMENT ── */
         .tc-statement {
-          padding: 160px 24px;
+          padding: 200px 24px;
           background: #0d0d0d;
           display: flex;
           align-items: center;
@@ -491,7 +537,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         .tc-gender {
           position: relative;
           width: 100%;
-          height: 90vh;
+          height: 95vh;
           overflow: hidden;
           background: #0a0a0a;
           display: flex;
@@ -510,10 +556,10 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           height: 100%;
           object-fit: cover;
           display: block;
-          opacity: 0.5;
-          transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+          opacity: 0;
+          transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .tc-gender:hover .tc-gender-img {
+        .tc-gender:hover .tc-gender-img.visible {
           transform: scale(1.02);
           opacity: 0.65;
         }
@@ -562,17 +608,11 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           padding: 0 0 6px;
           cursor: pointer;
           text-transform: uppercase;
-          transition: color 0.5s ease, border-color 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease;
+          transition: color 0.4s ease-in-out, border-color 0.4s ease-in-out;
         }
         .tc-gender-cta:hover {
           color: #fff;
-          border-color: #fff;
-        }
-        .tc-gender-him .tc-gender-cta:hover {
-          padding-left: 8px;
-        }
-        .tc-gender-her .tc-gender-cta:hover {
-          padding-right: 8px;
+          border-color: rgba(255,255,255,0.6);
         }
 
         /* Shared section styling (5 & 6) */
@@ -609,7 +649,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         /* ── SECTION 5: THE FOUNDATIONS ── */
         .tc-foundations {
           background: #090909;
-          padding: 160px 80px;
+          padding: 200px 80px;
           border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .tc-foundations-header {
@@ -617,7 +657,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 100px;
+          margin-bottom: 120px;
         }
         .tc-foundations-grid {
           display: grid;
@@ -644,12 +684,12 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           height: 100%;
           object-fit: contain;
           display: block;
-          opacity: 0.75;
-          transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+          opacity: 0;
+          transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
         }
-        .tc-f-card:hover .tc-f-img {
+        .tc-f-card:hover .tc-f-img.visible {
           transform: scale(1.02);
-          opacity: 1;
+          opacity: 0.85;
         }
         .tc-f-info {
           display: flex;
@@ -675,7 +715,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         /* ── SECTION 6: THE COLOUR STUDIES ── */
         .tc-colour {
           background: #0d0d0d;
-          padding: 160px 80px;
+          padding: 200px 80px;
           border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .tc-colour-header {
@@ -683,7 +723,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 100px;
+          margin-bottom: 120px;
         }
         .tc-moodboard {
           display: grid;
@@ -744,14 +784,14 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         /* ── SECTION 7: ALL GARMENTS ── */
         .tc-all-garments {
           background: #090909;
-          padding: 160px 80px;
+          padding: 200px 80px;
         }
         .tc-all-header {
           text-align: center;
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 80px;
+          margin-bottom: 100px;
         }
         .tc-controls {
           display: flex;
@@ -841,11 +881,11 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           height: 100%;
           object-fit: contain;
           display: block;
-          opacity: 0.75;
-          transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          opacity: 0;
+          transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
         }
-        .tc-card:hover .tc-card-img {
-          opacity: 1;
+        .tc-card:hover .tc-card-img.visible {
+          opacity: 0.85;
           transform: scale(1.02);
         }
         .tc-card-info {
