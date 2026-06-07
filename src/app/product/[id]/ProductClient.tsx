@@ -1826,7 +1826,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #f5f5f0;
+          background: #ffffff;
           overflow: hidden;
         }
         .ss-gallery-img {
@@ -2054,7 +2054,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           .ss-desktop-img-block {
             width: 100%;
             aspect-ratio: 3 / 4;
-            background: #f5f5f0;
+            background: #ffffff;
             overflow: hidden;
             display: flex;
             align-items: center;
