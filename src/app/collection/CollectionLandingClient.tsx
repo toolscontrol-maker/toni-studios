@@ -95,7 +95,15 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
 
   // Archive filtered grid
   const filteredProducts = useMemo(() => {
-    return products.filter(product => {
+    // Validate: filter out invalid products
+    const validProducts = products.filter(p => p && typeof p === 'object' && p.handle);
+    
+    // Log missing images for debugging
+    validProducts.forEach((product) => {
+      if (!product.imageUrl) console.warn("Missing image:", product);
+    });
+
+    return validProducts.filter(product => {
       // 1. Garment Type filter
       if (filterGarmentType !== 'all') {
         if (getGarmentType(product) !== filterGarmentType) return false;
@@ -223,7 +231,8 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
               const archiveRef = getArchiveRef(product.handle);
               const collectionInfo = getCollectionInfo(product);
               const available = isAvailable(product);
-              const secondImage = product.images.length > 1 ? product.images[1] : null;
+              const hasImage = product.imageUrl && product.imageUrl.trim().length > 0;
+              const secondImage = product.images && product.images.length > 1 ? product.images[1] : null;
 
               // Insert an editorial quote block periodically
               const shouldShowQuote = index > 0 && index % 6 === 0;
@@ -243,22 +252,30 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
                   <Link href={`/product/${product.handle}`} className="tonet-archive-card archive-reveal">
                     {/* Architectural Image Wrapper with museum stone background */}
                     <div className="tonet-archive-card__image-wrap">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.title}
-                        className="tonet-archive-card__image tonet-archive-card__image--primary"
-                        loading="lazy"
-                      />
-                      {secondImage && (
-                        <img
-                          src={secondImage}
-                          alt={product.title}
-                          className="tonet-archive-card__image tonet-archive-card__image--secondary"
-                          loading="lazy"
-                        />
+                      {hasImage ? (
+                        <>
+                          <img
+                            src={product.imageUrl}
+                            alt={product.title || "TONET garment"}
+                            className="tonet-archive-card__image tonet-archive-card__image--primary"
+                            loading="lazy"
+                          />
+                          {secondImage && (
+                            <img
+                              src={secondImage}
+                              alt={product.title || "TONET garment"}
+                              className="tonet-archive-card__image tonet-archive-card__image--secondary"
+                              loading="lazy"
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <div className="tonet-archive-card__image-placeholder">
+                          <span>Image Unavailable</span>
+                        </div>
                       )}
                       
-                      {/* Technical Hover Panel (Museum Report) */}
+                      {/* Minimal hover metadata overlay */}
                       <div className="tonet-archive-hover-panel">
                         <div className="tonet-archive-hover-panel__rows">
                           <div className="tonet-archive-hover-panel__row">
@@ -273,15 +290,9 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
                             <span className="lbl">ARCHIVE REF.</span>
                             <span className="val">{archiveRef}</span>
                           </div>
-                          <div className="tonet-archive-hover-panel__row">
-                            <span className="lbl">FABRIC DETAILS</span>
-                            <span className="val">DOCUMENTED SPECIFICATION</span>
-                          </div>
                         </div>
                         <div className="tonet-archive-hover-panel__actions">
                           <span className="action-btn">VIEW RECORD</span>
-                          <span className="action-sep">—</span>
-                          <span className="action-btn">PRESERVE STATE</span>
                         </div>
                       </div>
                     </div>
@@ -312,22 +323,36 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         </div>
       </section>
 
+      {/* ── FOOTER (Silent, Editorial) ── */}
+      <footer className="tonet-archive-footer">
+        <div className="tonet-archive-footer__content">
+          <p className="tonet-archive-footer__label">PRIVATE RELEASES</p>
+          <p className="tonet-archive-footer__note">
+            New garments are introduced quietly. No campaigns. No restocks.
+          </p>
+          <div className="tonet-archive-footer__socials">
+            <a href="https://instagram.com/tonetparis" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
+            <span className="tonet-archive-footer__sep">·</span>
+            <a href="mailto:contact@tonetparis.com">CONTACT</a>
+          </div>
+        </div>
+      </footer>
+
       {/* ── STYLE ── */}
       <style>{`
         .tonet-archive {
           background: #060606;
           color: #ffffff;
-          overflow: hidden;
+          overflow-x: hidden;
           min-height: 100vh;
-          padding-bottom: 200px;
           font-family: var(--font-primary), sans-serif;
         }
 
         /* Cinematic Intersection Observer Reveals */
         .archive-reveal {
           opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          transform: translateY(20px);
+          transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
           will-change: opacity, transform;
         }
         .archive-reveal.visible {
@@ -335,20 +360,23 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           transform: translateY(0);
         }
 
-        /* ── HERO SECTION ── */
+        /* ── HERO SECTION (Compact 35-45vh) ── */
         .tonet-archive-hero {
           position: relative;
           width: 100%;
-          height: 100vh;
+          height: 40vh;
+          min-height: 280px;
+          max-height: 420px;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #000;
+          background: #060606;
+          border-bottom: 1px solid rgba(255,255,255,0.03);
         }
         .tonet-archive-hero__bg-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(6,6,6,0.95) 100%);
+          background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(6,6,6,0.92) 100%);
           z-index: 1;
         }
         .tonet-archive-hero__image {
@@ -357,123 +385,109 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.38;
+          opacity: 0.18;
           filter: grayscale(1);
         }
         .tonet-archive-hero__content {
           position: relative;
           z-index: 2;
           text-align: center;
-          max-width: 540px;
-          padding: 0 24px;
+          max-width: 700px;
+          padding: 32px 24px 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .tonet-archive-hero__eyebrow {
-          font-size: 9px;
+          font-size: 8px;
           font-weight: 300;
           letter-spacing: 0.52em;
-          color: rgba(255,255,255,0.3);
-          margin-bottom: 24px;
+          color: rgba(255,255,255,0.22);
+          margin-bottom: 10px;
+          text-transform: uppercase;
         }
         .tonet-archive-hero__title {
-          font-size: clamp(38px, 6vw, 72px);
+          font-size: clamp(26px, 4.5vw, 44px);
           font-weight: 200;
           letter-spacing: 0.28em;
-          line-height: 1.15;
-          margin-bottom: 32px;
+          line-height: 1.2;
+          margin-bottom: 10px;
           color: #fff;
         }
-        .tonet-archive-hero__description {
-          font-size: 11.5px;
+        .tonet-archive-hero__subtitle {
+          font-size: 10.5px;
           font-weight: 300;
-          line-height: 2.1;
-          letter-spacing: 0.1em;
-          color: rgba(255,255,255,0.42);
-          margin-bottom: 56px;
-        }
-        .tonet-archive-hero__cta {
-          font-size: 9px;
-          font-weight: 300;
-          letter-spacing: 0.42em;
-          color: rgba(255,255,255,0.4);
-          background: transparent;
-          border: none;
-          border-bottom: 1px solid rgba(255,255,255,0.15);
-          padding-bottom: 8px;
-          cursor: pointer;
-          transition: color 0.4s, border-color 0.4s;
-        }
-        .tonet-archive-hero__cta:hover {
-          color: #fff;
-          border-color: rgba(255,255,255,0.6);
+          letter-spacing: 0.08em;
+          color: rgba(255,255,255,0.38);
+          margin-bottom: 18px;
         }
 
-        /* ── STATS SECTION (Museum Metadata) ── */
+        /* ── STATS (Inline Museum Metadata) ── */
         .tonet-archive-stats {
-          background: #060606;
-          padding: 120px 80px;
-          border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-        .tonet-archive-stats__container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          text-align: center;
-        }
-        .tonet-archive-stats__item {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-        .tonet-archive-stats__label {
-          font-size: 8.5px;
-          font-weight: 300;
-          letter-spacing: 0.35em;
-          color: rgba(255,255,255,0.22);
-        }
-        .tonet-archive-stats__value {
-          font-size: 20px;
-          font-weight: 200;
-          letter-spacing: 0.1em;
-          color: rgba(255,255,255,0.7);
-        }
-
-        /* ── FILTER SYSTEM (Archive Indexing) ── */
-        .tonet-archive-controls {
-          background: #060606;
-          padding: 80px 80px 40px;
-        }
-        .tonet-archive-controls__container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          gap: 36px;
-        }
-        .tonet-archive-filter {
           display: flex;
           align-items: center;
-          border-bottom: 1px solid rgba(255,255,255,0.02);
-          padding-bottom: 18px;
+          gap: 14px;
+          margin-top: 2px;
+          flex-wrap: wrap;
+          justify-content: center;
         }
-        .tonet-archive-filter__label {
+        .tonet-archive-stats__item {
           font-size: 8.5px;
           font-weight: 300;
-          letter-spacing: 0.35em;
-          color: rgba(255,255,255,0.25);
-          width: 180px;
-          flex-shrink: 0;
+          letter-spacing: 0.2em;
+          color: rgba(255,255,255,0.32);
+        }
+        .tonet-archive-stats__divider {
+          font-size: 8px;
+          color: rgba(255,255,255,0.08);
+        }
+
+        /* ── COMPACT FILTER BAR (Max 80-100px) ── */
+        .tonet-archive-controls {
+          background: #060606;
+          border-bottom: 1px solid rgba(255,255,255,0.04);
+          display: flex;
+          align-items: center;
+          padding: 0 40px;
+          min-height: 56px;
+        }
+        .tonet-archive-controls__container {
+          max-width: 1400px;
+          width: 100%;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 12px 0;
+        }
+        .tonet-archive-controls__col {
+          display: flex;
+          align-items: center;
+        }
+        .tonet-archive-controls__text {
+          font-size: 8.5px;
+          font-weight: 300;
+          letter-spacing: 0.28em;
+          color: rgba(255,255,255,0.4);
+        }
+        .tonet-archive-controls__divider-vertical {
+          width: 1px;
+          height: 14px;
+          background: rgba(255,255,255,0.06);
         }
         .tonet-archive-filter__options {
           display: flex;
-          gap: 32px;
+          gap: 18px;
+          align-items: center;
           flex-wrap: wrap;
         }
         .tonet-archive-filter__btn {
           font-family: var(--font-primary), sans-serif;
           font-size: 8.5px;
           font-weight: 300;
-          letter-spacing: 0.28em;
+          letter-spacing: 0.25em;
           color: rgba(255,255,255,0.35);
           background: transparent;
           border: none;
@@ -493,25 +507,25 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           left: 0;
           width: 100%;
           height: 1px;
-          background: rgba(255,255,255,0.6);
+          background: rgba(255,255,255,0.5);
         }
 
         /* ── ARCHITECTURAL GRID ── */
         .tonet-archive-grid-section {
           background: #060606;
-          padding: 100px 80px 180px;
+          padding: 48px 40px 120px;
         }
         .tonet-archive-grid {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 120px 80px;
+          gap: 64px 48px;
         }
         .tonet-archive-grid__wrapper {
           display: flex;
           flex-direction: column;
-          gap: 80px;
+          gap: 48px;
         }
 
         /* ── PRODUCT CARD ── */
@@ -523,18 +537,17 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         }
         .tonet-archive-card__image-wrap {
           position: relative;
-          aspect-ratio: 3 / 4;
-          background: #ededec;
-          border-radius: 4px;
+          aspect-ratio: 4 / 5;
+          background: #E7E4DF;
+          border-radius: 2px;
           overflow: hidden;
-          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .tonet-archive-card__image {
           width: 100%;
           height: 100%;
-          object-fit: contain;
+          object-fit: cover;
           display: block;
-          border-radius: 4px;
           transition: opacity 400ms ease-in-out;
         }
         .tonet-archive-card__image--secondary {
@@ -542,12 +555,23 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           inset: 0;
           opacity: 0;
         }
-
-        /* Hover behaviors on card image */
-        .tonet-archive-card:hover .tonet-archive-card__image-wrap {
-          transform: translateY(-4px);
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+        .tonet-archive-card__image-placeholder {
+          width: 100%;
+          height: 100%;
+          background: rgba(231, 228, 223, 0.05);
+          border: 1px solid rgba(255,255,255,0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
+        .tonet-archive-card__image-placeholder span {
+          font-size: 10px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.3);
+        }
+
+        /* Hover behaviors */
         .tonet-archive-card:hover .tonet-archive-card__image--primary {
           opacity: 0;
         }
@@ -555,19 +579,19 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           opacity: 1;
         }
 
-        /* Technical hover overlay (Museum metadata) */
+        /* Minimal hover metadata overlay */
         .tonet-archive-hover-panel {
           position: absolute;
           inset: 0;
-          background: rgba(6, 6, 6, 0.94);
+          background: rgba(6, 6, 6, 0.88);
           opacity: 0;
           z-index: 2;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          padding: 40px;
-          transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1);
-          border-radius: 4px;
+          padding: 28px;
+          transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+          border-radius: 2px;
         }
         .tonet-archive-card:hover .tonet-archive-hover-panel {
           opacity: 1;
@@ -575,13 +599,13 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         .tonet-archive-hover-panel__rows {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 14px;
         }
         .tonet-archive-hover-panel__row {
           display: flex;
           justify-content: space-between;
           border-bottom: 1px solid rgba(255,255,255,0.04);
-          padding-bottom: 8px;
+          padding-bottom: 5px;
         }
         .tonet-archive-hover-panel__row .lbl {
           font-size: 8px;
@@ -597,34 +621,25 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         }
         .tonet-archive-hover-panel__actions {
           display: flex;
-          gap: 16px;
           align-items: center;
           margin-top: auto;
         }
         .tonet-archive-hover-panel__actions .action-btn {
-          font-size: 8.5px;
+          font-size: 8px;
           font-weight: 300;
           letter-spacing: 0.35em;
-          color: rgba(255,255,255,0.45);
-          transition: color 0.3s;
-        }
-        .tonet-archive-hover-panel__actions .action-btn:hover {
-          color: #ffffff;
-        }
-        .tonet-archive-hover-panel__actions .action-sep {
-          font-size: 8px;
-          color: rgba(255,255,255,0.15);
+          color: rgba(255,255,255,0.5);
         }
 
         /* Card Metadata labels */
         .tonet-archive-card__metadata {
-          padding-top: 24px;
+          padding-top: 16px;
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 5px;
         }
         .tonet-archive-card__collection {
-          font-size: 8.5px;
+          font-size: 8px;
           font-weight: 300;
           letter-spacing: 0.42em;
           color: rgba(255,255,255,0.22);
@@ -632,12 +647,12 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         }
         .tonet-archive-card__title {
           font-family: Georgia, serif;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 300;
           font-style: italic;
           letter-spacing: 0.04em;
           color: rgba(255, 255, 255, 0.88);
-          line-height: 1.55;
+          line-height: 1.5;
           margin: 0;
           white-space: normal;
         }
@@ -645,16 +660,16 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-top: 4px;
+          margin-top: 2px;
         }
         .tonet-archive-card__ref {
-          font-size: 8.5px;
+          font-size: 8px;
           font-weight: 300;
           letter-spacing: 0.15em;
           color: rgba(255,255,255,0.45);
         }
         .tonet-archive-card__status--archived {
-          font-size: 8px;
+          font-size: 7.5px;
           font-weight: 400;
           letter-spacing: 0.2em;
           color: #8f4b4b;
@@ -665,28 +680,28 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
           width: 100%;
           border-top: 1px solid rgba(255,255,255,0.03);
           border-bottom: 1px solid rgba(255,255,255,0.03);
-          padding: 80px 0;
+          padding: 56px 0;
           text-align: center;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 10px;
           align-items: center;
           justify-content: center;
           grid-column: 1 / -1;
         }
         .tonet-archive-quote__text {
           font-family: Georgia, serif;
-          font-size: clamp(16px, 2.2vw, 24px);
+          font-size: clamp(13px, 1.8vw, 18px);
           font-weight: 300;
           font-style: italic;
           letter-spacing: 0.08em;
           line-height: 1.8;
           color: rgba(255,255,255,0.48);
-          max-width: 650px;
+          max-width: 600px;
           margin: 0;
         }
         .tonet-archive-quote__sub {
-          font-size: 8px;
+          font-size: 7.5px;
           font-weight: 300;
           letter-spacing: 0.45em;
           color: rgba(255,255,255,0.18);
@@ -694,64 +709,136 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
 
         .tonet-archive-empty {
           grid-column: 1 / -1;
-          padding: 140px 24px;
+          padding: 100px 24px;
           text-align: center;
-          font-size: 10px;
+          font-size: 9px;
           font-weight: 300;
           letter-spacing: 0.35em;
           color: rgba(255,255,255,0.3);
         }
 
+        /* ── FOOTER ── */
+        .tonet-archive-footer {
+          background: #060606;
+          border-top: 1px solid rgba(255,255,255,0.03);
+          padding: 80px 40px;
+          text-align: center;
+        }
+        .tonet-archive-footer__content {
+          max-width: 500px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          align-items: center;
+        }
+        .tonet-archive-footer__label {
+          font-size: 8.5px;
+          font-weight: 300;
+          letter-spacing: 0.45em;
+          color: rgba(255,255,255,0.25);
+        }
+        .tonet-archive-footer__note {
+          font-size: 10.5px;
+          font-weight: 300;
+          line-height: 1.8;
+          letter-spacing: 0.06em;
+          color: rgba(255,255,255,0.35);
+        }
+        .tonet-archive-footer__socials {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          margin-top: 8px;
+        }
+        .tonet-archive-footer__socials a {
+          font-size: 8px;
+          font-weight: 300;
+          letter-spacing: 0.35em;
+          color: rgba(255,255,255,0.3);
+          text-decoration: none;
+          transition: color 0.3s;
+        }
+        .tonet-archive-footer__socials a:hover {
+          color: rgba(255,255,255,0.7);
+        }
+        .tonet-archive-footer__sep {
+          font-size: 8px;
+          color: rgba(255,255,255,0.1);
+        }
+
         /* ── RESPONSIVE ADAPTATIONS ── */
         @media (max-width: 1024px) {
-          .tonet-archive-stats {
-            padding: 80px 40px;
-          }
           .tonet-archive-controls {
-            padding: 60px 40px 20px;
+            padding: 0 24px;
           }
           .tonet-archive-grid-section {
-            padding: 60px 40px 120px;
+            padding: 36px 24px 100px;
           }
           .tonet-archive-grid {
-            gap: 80px 40px;
+            gap: 48px 32px;
+          }
+          .tonet-archive-footer {
+            padding: 60px 24px;
+          }
+        }
+
+        @media (max-width: 900px) {
+          .tonet-archive-controls__container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          .tonet-archive-controls__divider-vertical {
+            display: none;
           }
         }
 
         @media (max-width: 767px) {
+          .tonet-archive-hero {
+            height: 35vh;
+            min-height: 240px;
+            max-height: 340px;
+          }
+          .tonet-archive-hero__content {
+            padding-top: 20px;
+          }
+          .tonet-archive-hero__title {
+            font-size: 24px;
+            letter-spacing: 0.2em;
+          }
           .tonet-archive-stats {
-            padding: 60px 24px;
+            gap: 10px;
           }
-          .tonet-archive-stats__container {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px 16px;
-          }
-          .tonet-archive-controls {
-            padding: 40px 24px 20px;
-          }
-          .tonet-archive-filter {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-          }
-          .tonet-archive-filter__label {
-            margin-bottom: 4px;
+          .tonet-archive-stats__item {
+            font-size: 7.5px;
           }
           .tonet-archive-filter__options {
-            gap: 16px 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+          }
+          .tonet-archive-filter__btn {
+            font-size: 7.5px;
+            letter-spacing: 0.15em;
+          }
+          .tonet-archive-controls__text {
+            font-size: 7.5px;
           }
           .tonet-archive-grid-section {
-            padding: 40px 24px 100px;
+            padding: 24px 16px 80px;
           }
           .tonet-archive-grid {
             grid-template-columns: 1fr;
-            gap: 60px;
+            gap: 48px;
           }
           .tonet-archive-grid__wrapper {
-            gap: 60px;
+            gap: 48px;
           }
           .tonet-archive-hover-panel {
-            display: none !important; /* Touch-optimized simple grid interaction on mobile */
+            display: none !important;
+          }
+          .tonet-archive-footer {
+            padding: 48px 16px;
           }
         }
       `}</style>
