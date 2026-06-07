@@ -95,6 +95,22 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
     } catch {}
   }, [product.handle]);
 
+  /* ── Archival block scroll reveal ── */
+  useEffect(() => {
+    const el = archiveSectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setArchiveVisible(true);
+        });
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const images = product.images.length > 0 ? product.images : [product.imageUrl].filter(Boolean);
   const [activeImage, setActiveImage] = useState(0);
   const [displayImageUrl, setDisplayImageUrl] = useState<string>(() => images[0] ?? product.imageUrl);
@@ -111,6 +127,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
   const [availSubmitting, setAvailSubmitting] = useState(false);
   const [ceremonyOpen, setCeremonyOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const [archiveVisible, setArchiveVisible] = useState(false);
+  const archiveSectionRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   useLocale();
   const { toggle, has, items } = useWishlist();
@@ -939,6 +957,82 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
       </div>
 
+      {/* ══ ARCHIVAL RECORD — Garment Documentation ══ */}
+      <section
+        ref={archiveSectionRef}
+        className={`tn-archival ${archiveVisible ? 'tn-archival--visible' : ''}`}
+      >
+        <div className="tn-archival__inner">
+
+          {/* Top — Editorial Statement */}
+          <div className="tn-archival__statement">
+            <span className="tn-archival__eyebrow">Archival Record</span>
+            <p className="tn-archival__text">
+              {editorialNotes[0]} {product.title} exists within the House as a
+              permanent object — not seasonal, not disposable. Each garment is
+              registered, documented, and preserved as part of TONET’s ongoing lineage.
+            </p>
+          </div>
+
+          {/* Bottom — Three Columns */}
+          <div className="tn-archival__grid">
+
+            {/* Left — Registry Metadata */}
+            <div className="tn-archival__col">
+              <span className="tn-archival__col-label">Registry</span>
+              <div className="tn-archival__col-body">
+                <div className="tn-archival__meta-row">
+                  <span className="tn-archival__meta-key">Collection</span>
+                  <span className="tn-archival__meta-val">{getHouseState(product.handle)}</span>
+                </div>
+                <div className="tn-archival__meta-row">
+                  <span className="tn-archival__meta-key">Archive Ref.</span>
+                  <span className="tn-archival__meta-val">{getArchiveRef(product.handle)}</span>
+                </div>
+                <div className="tn-archival__meta-row">
+                  <span className="tn-archival__meta-key">Status</span>
+                  <span className="tn-archival__meta-val">
+                    {selectedVariant.availableForSale ? 'Active Archive' : 'Permanently Archived'}
+                  </span>
+                </div>
+                <div className="tn-archival__meta-row">
+                  <span className="tn-archival__meta-key">Registry Date</span>
+                  <span className="tn-archival__meta-val">MMXXVI</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Center — Editorial Phrase */}
+            <div className="tn-archival__col tn-archival__col--center">
+              <span className="tn-archival__col-label">House Note</span>
+              <blockquote className="tn-archival__quote">
+                “A garment should not announce itself. It should remain —
+                quiet, structural, permanent.”
+              </blockquote>
+              <span className="tn-archival__quote-source">— TONET Research Archive</span>
+            </div>
+
+            {/* Right — Garment Metadata */}
+            <div className="tn-archival__col">
+              <span className="tn-archival__col-label">Specifications</span>
+              <div className="tn-archival__col-body">
+                {detailsRows.map((row) => (
+                  <div className="tn-archival__meta-row" key={row.label}>
+                    <span className="tn-archival__meta-key">{row.label}</span>
+                    <span className="tn-archival__meta-val">{row.value}</span>
+                  </div>
+                ))}
+                <div className="tn-archival__meta-row">
+                  <span className="tn-archival__meta-key">Care</span>
+                  <span className="tn-archival__meta-val">{careLines[0]}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
 
       {/* ══ THE HOUSE ══ */}
       <section className="ss-philosophy">
@@ -2216,6 +2310,136 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           font-family: var(--font-primary);
         }
 
+        /* ══ ARCHIVAL RECORD — Garment Documentation ══ */
+        .tn-archival {
+          background: #111111;
+          padding: 120px 40px;
+          font-family: var(--font-primary);
+          opacity: 0;
+          transform: translateY(28px);
+          transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                      transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, transform;
+        }
+        .tn-archival--visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .tn-archival__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 80px;
+        }
+
+        /* Top statement */
+        .tn-archival__statement {
+          max-width: 720px;
+          margin: 0 auto;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+        .tn-archival__eyebrow {
+          font-size: 8px;
+          font-weight: 300;
+          letter-spacing: 0.5em;
+          text-transform: uppercase;
+          color: rgba(231, 228, 223, 0.25);
+        }
+        .tn-archival__text {
+          font-size: 14px;
+          font-weight: 300;
+          line-height: 2.2;
+          letter-spacing: 0.04em;
+          color: rgba(231, 228, 223, 0.55);
+          margin: 0;
+        }
+
+        /* Three-column grid */
+        .tn-archival__grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 48px;
+          align-items: start;
+        }
+        .tn-archival__col {
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
+        }
+        .tn-archival__col--center {
+          text-align: center;
+          align-items: center;
+          border-left: 1px solid rgba(231, 228, 223, 0.05);
+          border-right: 1px solid rgba(231, 228, 223, 0.05);
+          padding: 0 48px;
+        }
+        .tn-archival__col-label {
+          font-size: 8px;
+          font-weight: 300;
+          letter-spacing: 0.45em;
+          text-transform: uppercase;
+          color: rgba(231, 228, 223, 0.22);
+        }
+        .tn-archival__col-body {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+        .tn-archival__meta-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          gap: 16px;
+          border-bottom: 1px solid rgba(231, 228, 223, 0.04);
+          padding-bottom: 10px;
+        }
+        .tn-archival__meta-key {
+          font-size: 8.5px;
+          font-weight: 300;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: rgba(231, 228, 223, 0.28);
+          flex-shrink: 0;
+        }
+        .tn-archival__meta-val {
+          font-size: 9.5px;
+          font-weight: 300;
+          letter-spacing: 0.06em;
+          color: rgba(231, 228, 223, 0.65);
+          text-align: right;
+        }
+
+        /* Center quote */
+        .tn-archival__quote {
+          font-family: Georgia, serif;
+          font-size: 15px;
+          font-weight: 300;
+          font-style: italic;
+          line-height: 1.9;
+          letter-spacing: 0.03em;
+          color: rgba(231, 228, 223, 0.48);
+          margin: 0;
+          max-width: 280px;
+        }
+        .tn-archival__quote-source {
+          font-size: 8px;
+          font-weight: 300;
+          letter-spacing: 0.35em;
+          text-transform: uppercase;
+          color: rgba(231, 228, 223, 0.18);
+          margin-top: 8px;
+        }
+
+        @media (max-width: 1024px) {
+          .tn-archival { padding: 100px 32px; }
+          .tn-archival__inner { gap: 64px; }
+          .tn-archival__col--center { padding: 0 32px; }
+        }
+
         @media (max-width: 767px) {
           html, body { background: #ffffff !important; }
           .ss-gallery,
@@ -2254,6 +2478,33 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
           .tonet-house-carousel__item {
             flex: 0 0 75vw !important;
             min-width: 75vw !important;
+          }
+
+          /* ARCHIVAL RECORD MOBILE */
+          .tn-archival {
+            padding: 80px 24px;
+          }
+          .tn-archival__inner {
+            gap: 56px;
+          }
+          .tn-archival__text {
+            font-size: 12px;
+            line-height: 2;
+          }
+          .tn-archival__grid {
+            grid-template-columns: 1fr;
+            gap: 48px;
+          }
+          .tn-archival__col--center {
+            border-left: none;
+            border-right: none;
+            padding: 48px 0;
+            border-top: 1px solid rgba(231, 228, 223, 0.05);
+            border-bottom: 1px solid rgba(231, 228, 223, 0.05);
+          }
+          .tn-archival__quote {
+            font-size: 13px;
+            max-width: 260px;
           }
         }
         /* ══ AVAILABILITY REQUEST MODAL ══ */
