@@ -121,7 +121,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
   return (
     <div className="tonet-archive">
       
-      {/* ── HERO SECTION (Cinematic Viewport) ── */}
+      {/* ── HEADER / HERO (Compact 35-45vh Viewport) ── */}
       <section className="tonet-archive-hero">
         <div className="tonet-archive-hero__bg-overlay" />
         <img
@@ -133,43 +133,38 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         <div className="tonet-archive-hero__content">
           <p className="tonet-archive-hero__eyebrow">HOUSE OF TONET</p>
           <h1 className="tonet-archive-hero__title">THE COLLECTION</h1>
-          <p className="tonet-archive-hero__description">
-            A registry of garments produced and preserved by the House, exploring permanence, repetition and architectural form.
+          <p className="tonet-archive-hero__subtitle">
+            A registry of garments produced and preserved by the House.
           </p>
-          <button className="tonet-archive-hero__cta" onClick={scrollToRegistry}>
-            ENTER REGISTRY
-          </button>
-        </div>
-      </section>
-
-      {/* ── STATS SECTION (Museum Metadata) ── */}
-      <section className="tonet-archive-stats">
-        <div className="tonet-archive-stats__container">
-          <div className="tonet-archive-stats__item">
-            <span className="tonet-archive-stats__label">PIECES</span>
-            <span className="tonet-archive-stats__value">{stats.total}</span>
-          </div>
-          <div className="tonet-archive-stats__item">
-            <span className="tonet-archive-stats__label">COLLECTIONS</span>
-            <span className="tonet-archive-stats__value">{stats.collections}</span>
-          </div>
-          <div className="tonet-archive-stats__item">
-            <span className="tonet-archive-stats__label">ACTIVE</span>
-            <span className="tonet-archive-stats__value">{stats.active}</span>
-          </div>
-          <div className="tonet-archive-stats__item">
-            <span className="tonet-archive-stats__label">ARCHIVED</span>
-            <span className="tonet-archive-stats__value">{stats.archived}</span>
+          
+          {/* Subtle Museum Metadata Stats */}
+          <div className="tonet-archive-stats">
+            <span className="tonet-archive-stats__item">PIECES · {stats.total}</span>
+            <span className="tonet-archive-stats__divider">|</span>
+            <span className="tonet-archive-stats__item">COLLECTIONS · {stats.collections}</span>
+            <span className="tonet-archive-stats__divider">|</span>
+            <span className="tonet-archive-stats__item">ARCHIVED · {stats.archived}</span>
+            <span className="tonet-archive-stats__divider">|</span>
+            <span className="tonet-archive-stats__item">ACTIVE · {stats.active}</span>
           </div>
         </div>
       </section>
 
-      {/* ── FILTER INDEX (Almost Invisible Archive Indexing) ── */}
+      {/* ── COMPACT FILTER BAR (1 Compact Row, Max Height 80-100px) ── */}
       <section className="tonet-archive-controls" ref={registryStartRef}>
         <div className="tonet-archive-controls__container">
           
-          <div className="tonet-archive-filter">
-            <span className="tonet-archive-filter__label">GARMENT TYPE</span>
+          {/* Column 1: Count */}
+          <div className="tonet-archive-controls__col tonet-archive-controls__col--info">
+            <span className="tonet-archive-controls__text">
+              ALL PIECES · {filteredProducts.length} GARMENTS
+            </span>
+          </div>
+
+          <div className="tonet-archive-controls__divider-vertical" />
+
+          {/* Column 2: Garment Type */}
+          <div className="tonet-archive-controls__col tonet-archive-controls__col--types">
             <div className="tonet-archive-filter__options">
               {(['all', 'tops', 'bottoms', 'outerwear'] as const).map(t => (
                 <button
@@ -183,8 +178,10 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
             </div>
           </div>
 
-          <div className="tonet-archive-filter">
-            <span className="tonet-archive-filter__label">COLLECTION</span>
+          <div className="tonet-archive-controls__divider-vertical" />
+
+          {/* Column 3: Collection */}
+          <div className="tonet-archive-controls__col tonet-archive-controls__col--collections">
             <div className="tonet-archive-filter__options">
               {(['all', 'HOUSE_01', 'HOUSE_02', 'HOUSE_03'] as const).map(c => (
                 <button
@@ -192,14 +189,16 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
                   className={`tonet-archive-filter__btn ${filterCollection === c ? 'active' : ''}`}
                   onClick={() => setFilterCollection(c)}
                 >
-                  {c.replace('_', ' ').toUpperCase()}
+                  {c === 'all' ? 'ALL COLLECTIONS' : c.replace('_', ' ').toUpperCase()}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="tonet-archive-filter">
-            <span className="tonet-archive-filter__label">HOUSE STATE</span>
+          <div className="tonet-archive-controls__divider-vertical" />
+
+          {/* Column 4: House State */}
+          <div className="tonet-archive-controls__col tonet-archive-controls__col--states">
             <div className="tonet-archive-filter__options">
               {(['all', 'active', 'archived'] as const).map(s => (
                 <button
