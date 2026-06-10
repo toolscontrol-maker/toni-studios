@@ -122,7 +122,7 @@ export default function Navbar() {
           </div>
 
           <Link href="/" className="acne-logo">
-            <span className="acne-logo-text">TONET</span>
+            <span className="acne-logo-text">TONET GALLERY</span>
           </Link>
 
           {/* RIGHT: Nav links (desktop) + Search (desktop) + Account, Wishlist, Cart */}
@@ -235,7 +235,7 @@ export default function Navbar() {
           justify-content: center;
         }
         .acne-logo-text {
-          font-family: var(--font-primary);
+          font-family: var(--font-coolvetica), sans-serif;
           font-size: 13px;
           font-weight: 300;
           letter-spacing: 0.52em;
@@ -256,7 +256,7 @@ export default function Navbar() {
         }
         .acne-nav-links { display: flex; align-items: center; gap: 36px; }
         .acne-nav-links a {
-          font-family: var(--font-primary);
+          font-family: var(--font-coolvetica), sans-serif;
           font-size: 9px;
           font-weight: 300;
           text-transform: uppercase;

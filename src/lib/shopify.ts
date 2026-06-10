@@ -38,38 +38,47 @@ async function shopifyFetch<T>(
   query: string,
   variables: Record<string, unknown> = {}
 ): Promise<T> {
+  const fallback = {
+    products: { edges: [] },
+    collection: { products: { edges: [] } },
+    collections: { edges: [] },
+    product: null
+  } as unknown as T;
+
   if (!ensureEnv()) {
-    // Return empty mock structure to allow build compilation to pass
-    return {
-      products: { edges: [] },
-      collection: { products: { edges: [] } },
-      collections: { edges: [] },
-      product: null
-    } as unknown as T;
+    return fallback;
   }
   const token = TOKEN;
   const endpoint = `https://${DOMAIN}/api/${API_VERSION}/graphql.json`;
 
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': token,
-    },
-    body: JSON.stringify({ query, variables }),
-    cache: 'no-store',
-  });
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': token,
+      },
+      body: JSON.stringify({ query, variables }),
+      cache: 'no-store',
+    });
 
-  if (!res.ok) {
-    throw new Error(`Shopify fetch failed: ${res.status} ${res.statusText}`);
+    if (!res.ok) {
+      throw new Error(`Shopify fetch failed: ${res.status} ${res.statusText}`);
+    }
+
+    const json = await res.json();
+    if (json.errors) {
+      throw new Error(`Shopify GraphQL error: ${JSON.stringify(json.errors)}`);
+    }
+
+    return json.data as T;
+  } catch (err: any) {
+    if (err && (err.digest === 'DYNAMIC_SERVER_USAGE' || (err.message && err.message.includes('Dynamic server usage')))) {
+      throw err;
+    }
+    console.error('Error fetching from Shopify storefront API:', err);
+    return fallback;
   }
-
-  const json = await res.json();
-  if (json.errors) {
-    throw new Error(`Shopify GraphQL error: ${JSON.stringify(json.errors)}`);
-  }
-
-  return json.data as T;
 }
 
 const PRODUCT_FIELDS = `

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Analytics } from '@vercel/analytics/next';
 import { Jost } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -22,6 +22,11 @@ const jost = Jost({
   variable: "--font-jost",
 });
 
+const coolvetica = localFont({
+  src: "../../coolvetica/Coolvetica Rg.otf",
+  variable: "--font-coolvetica",
+});
+
 export const metadata: Metadata = {
   title: "TONET",
   description: "TONET — Online Store",
@@ -36,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={jost.variable} suppressHydrationWarning>
+    <html lang="en" className={`${jost.variable} ${coolvetica.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <TransitionProvider>
         <LocaleProvider>
@@ -51,7 +56,7 @@ export default function RootLayout({
                 <main>{children}</main>
                 <Footer />
                 <CookieBanner />
-                <Analytics />
+                {/* <Analytics /> */}
               </WishlistProvider>
               </AuthProvider>
             </CartProvider>

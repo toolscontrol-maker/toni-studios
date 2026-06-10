@@ -2044,7 +2044,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
           /* Gallery column */
           .ss-gallery {
-            width: 60%;
+            width: 52%;
             flex-shrink: 0;
             background: transparent;
             overflow: visible;
@@ -2069,7 +2069,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Props) 
 
           /* Info panel: sticky on the right, from header to bottom */
           .ss-info {
-            width: 40%;
+            width: 48%;
             position: sticky;
             top: 60px;
             height: calc(100vh - 60px);

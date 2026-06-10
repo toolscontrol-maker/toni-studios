@@ -207,24 +207,25 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           flex-direction: column;
           text-decoration: none;
           color: inherit;
-          background: #0d0d0d;
+          background: #ffffff;
+          border: 1px solid #000000;
           overflow: hidden;
           transition: background 0.6s ease;
         }
         .hc-card:hover {
-          background: #111;
+          background: #f7f7f7;
         }
         .hc-img-wrap {
           aspect-ratio: 3 / 4;
           overflow: hidden;
-          background: #0d0d0d;
+          background: #ffffff;
         }
         .hc-img {
           width: 100%;
           height: 100%;
           object-fit: contain;
           display: block;
-          opacity: 0.7;
+          opacity: 0.9;
           transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .hc-card:hover .hc-img {
@@ -243,7 +244,7 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           font-size: 10px;
           font-weight: 300;
           letter-spacing: 0.14em;
-          color: rgba(255,255,255,0.5);
+          color: rgba(0, 0, 0, 0.65);
           text-transform: uppercase;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -253,7 +254,7 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           font-family: var(--font-primary);
           font-size: 11px;
           font-weight: 400;
-          color: rgba(255,255,255,0.75);
+          color: #000000;
           letter-spacing: 0.06em;
         }
         .hc-swatches {
@@ -265,12 +266,12 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          border: 1px solid rgba(255,255,255,0.15);
+          border: 1px solid rgba(0, 0, 0, 0.15);
           flex-shrink: 0;
           transition: border-color 0.4s ease;
         }
         .hc-swatch:hover {
-          border-color: rgba(255,255,255,0.6);
+          border-color: rgba(0, 0, 0, 0.6);
         }
         .hc-sizes {
           display: flex;
@@ -282,8 +283,8 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           font-size: 8px;
           font-weight: 300;
           letter-spacing: 0.08em;
-          color: rgba(255,255,255,0.3);
-          border: 1px solid rgba(255,255,255,0.1);
+          color: rgba(0, 0, 0, 0.5);
+          border: 1px solid rgba(0, 0, 0, 0.15);
           border-radius: 2px;
           padding: 3px 7px;
           line-height: 1;
@@ -291,8 +292,8 @@ export default function HomeCollection({ products }: HomeCollectionProps) {
           transition: border-color 0.4s ease, color 0.4s ease;
         }
         .hc-size:hover {
-          border-color: rgba(255,255,255,0.4);
-          color: #fff;
+          border-color: #000000;
+          color: #000000;
         }
         .hc-all {
           display: block;

@@ -3,21 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
-function resolveLabel(href: string): string {
-  const path = href.split('?')[0];
-  if (path === '/') return 'Tonet';
-  if (path.startsWith('/about'))      return 'The House';
-  if (path.startsWith('/product/'))   return 'The Garment';
-  if (path.startsWith('/collection/')) return 'The Collection';
-  if (path.startsWith('/search'))     return 'The Archive';
-  if (path.startsWith('/wishlist'))   return 'The Archive';
-  if (path.startsWith('/archive'))    return 'The Archive';
-  if (path.startsWith('/account'))    return 'The Account';
-  if (path.startsWith('/contact'))    return 'The House';
-  if (path.startsWith('/login'))      return 'Tonet';
-  return 'Tonet';
-}
-
 type Phase = 'idle' | 'in' | 'out';
 
 export default function TransitionProvider({
@@ -29,14 +14,13 @@ export default function TransitionProvider({
   const pathname = usePathname();
 
   const [phase, setPhase] = useState<Phase>('idle');
-  const [label, setLabel] = useState('Tonet');
 
   const navigating = useRef(false);
   const prevPath   = useRef(pathname);
   const t1 = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const t2 = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  /* ── Watch pathname → start fade-out ── */
+  /* ── Watch pathname → start slide-out ── */
   useEffect(() => {
     if (pathname !== prevPath.current && navigating.current) {
       prevPath.current = pathname;
@@ -47,8 +31,8 @@ export default function TransitionProvider({
         t2.current = setTimeout(() => {
           setPhase('idle');
           navigating.current = false;
-        }, 480);
-      }, 90);
+        }, 650);
+      }, 100);
     }
   }, [pathname]);
 
@@ -59,11 +43,10 @@ export default function TransitionProvider({
       navigating.current = true;
       prevPath.current   = pathname;
 
-      setLabel(resolveLabel(href));
       setPhase('in');
 
       /* Navigate after overlay is fully visible */
-      setTimeout(() => router.push(href), 380);
+      setTimeout(() => router.push(href), 550);
     },
     [pathname, router],
   );
@@ -106,61 +89,73 @@ export default function TransitionProvider({
       {children}
 
       <style>{`
-        /* ════ TONET CINEMATIC TRANSITION ════ */
+        /* ════ TONET CINEMATIC SLIDE TRANSITION ════ */
         .tn-ov {
           position: fixed;
           inset: 0;
           z-index: 9000;
-          background: #0d0d0d;
+          background: #000000;
           display: flex;
           align-items: center;
           justify-content: center;
-          opacity: 0;
+          transform: translateY(100%);
           pointer-events: none;
-          transition: opacity 380ms cubic-bezier(0.16, 1, 0.3, 1);
-          will-change: opacity;
+          will-change: transform;
         }
+        
         .tn-ov--in {
-          opacity: 1;
+          transform: translateY(0%);
           pointer-events: all;
+          transition: transform 600ms cubic-bezier(0.85, 0, 0.15, 1);
         }
+        
         .tn-ov--out {
-          opacity: 0;
+          transform: translateY(-100%);
           pointer-events: none;
-          transition-duration: 460ms;
+          transition: transform 600ms cubic-bezier(0.85, 0, 0.15, 1);
         }
 
-        /* Subtle radial vignette — barely visible */
+        /* Subtle radial vignette */
         .tn-ov-vgn {
           position: absolute;
           inset: 0;
           background: radial-gradient(
             ellipse at 50% 50%,
-            transparent 20%,
-            rgba(0, 0, 0, 0.45) 100%
+            transparent 30%,
+            rgba(0, 0, 0, 0.6) 100%
           );
           pointer-events: none;
         }
 
-        /* Centered label */
+        /* Centered label in Coolvetica */
         .tn-ov-lbl {
-          font-family: var(--font-brand);
-          font-size: clamp(12px, 1.4vw, 16px);
+          font-family: var(--font-coolvetica), sans-serif;
+          font-size: clamp(24px, 3.5vw, 44px);
           font-weight: 300;
-          letter-spacing: 0.58em;
+          letter-spacing: 0.12em;
           text-transform: uppercase;
-          padding-right: 0.58em;          /* compensate tracking shift */
-          color: rgba(255, 255, 255, 0);  /* invisible until overlay is in */
+          padding-right: 0.12em;
+          color: #ffffff;
           position: relative;
           z-index: 1;
-          transition: color 360ms cubic-bezier(0.16, 1, 0.3, 1);
-          transition-delay: 160ms;
+          opacity: 0;
+          transform: scale(0.92) translateY(15px);
+          transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1), transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
         }
+        
         .tn-ov--in .tn-ov-lbl {
-          color: rgba(255, 255, 255, 0.2);
+          opacity: 1;
+          transform: scale(1) translateY(0);
+          transition-delay: 220ms;
+        }
+        
+        .tn-ov--out .tn-ov-lbl {
+          opacity: 0;
+          transform: scale(1.05) translateY(-15px);
+          transition: opacity 250ms ease, transform 250ms ease;
         }
 
-        /* Architectural hairline — bottom of overlay */
+        /* Architectural hairline */
         .tn-ov-rule {
           position: absolute;
           bottom: 52px;
@@ -168,13 +163,20 @@ export default function TransitionProvider({
           transform: translateX(-50%);
           width: 1px;
           height: 44px;
-          background: rgba(255, 255, 255, 0.06);
+          background: rgba(255, 255, 255, 0.08);
+          opacity: 0;
+          transition: opacity 300ms ease;
+        }
+        
+        .tn-ov--in .tn-ov-rule {
+          opacity: 1;
+          transition-delay: 250ms;
         }
       `}</style>
 
       <div className={cls} aria-hidden="true">
         <div className="tn-ov-vgn" />
-        <span className="tn-ov-lbl">{label}</span>
+        <span className="tn-ov-lbl">TONET GALLERY</span>
         <div className="tn-ov-rule" />
       </div>
     </>
