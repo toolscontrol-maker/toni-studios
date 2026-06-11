@@ -16,10 +16,11 @@
   --error-color: #d32f2f;
 
   /* ── Typography system ─────────────────────────────────── */
-  --font-brand: 'Saint Carell', sans-serif;
-  --font-primary: var(--font-jost), 'Jost', system-ui, sans-serif;
-  --font-serif: var(--font-jost), 'Jost', system-ui, sans-serif;
-  --font-ui: var(--font-jost), 'Jost', system-ui, sans-serif;
+  --font-brand: var(--font-helvetica-bold-cond), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-primary: var(--font-helvetica-roman), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-helvetica-roman), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-ui: var(--font-helvetica-medium), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: var(--font-helvetica-heavy), 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   /* Scale */
   --t-hero:  51px;  /* hero display */

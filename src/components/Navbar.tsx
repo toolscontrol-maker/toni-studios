@@ -1,14 +1,37 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useUI } from "@/context/UIContext";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
-  const { openCart, openMenuWithSearch, openMenu } = useUI();
+  const { openCart, openMenu, isSearchOpen, openSearch, closeSearch } = useUI();
   const { cartCount } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isSearchOpen && inputRef.current) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isSearchOpen]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      closeSearch();
+      const q = searchQuery.trim();
+      setSearchQuery("");
+      router.push(`/search?q=${encodeURIComponent(q)}`);
+    }
+  };
 
   return (
     <>
@@ -37,14 +60,51 @@ export default function Navbar() {
 
           {/* RIGHT: Actions */}
           <div className="erd-header-right erd-desktop-only">
-            <button className="erd-action-btn" onClick={openMenuWithSearch}>
-              SEARCH
+            {isSearchOpen ? (
+              <form onSubmit={handleSearchSubmit} className="erd-search-inline-form">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="erd-search-inline-input"
+                  placeholder="SEARCH"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      closeSearch();
+                      setSearchQuery("");
+                    }, 200);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      closeSearch();
+                      setSearchQuery("");
+                    }
+                  }}
+                  autoFocus
+                />
+              </form>
+            ) : (
+              <button className="erd-action-btn" onClick={openSearch} aria-label="Search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </button>
+            )}
+            <button className="erd-action-btn" onClick={openCart} aria-label="Cart" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              {cartCount > 0 && <span className="erd-cart-count">{cartCount}</span>}
             </button>
-            <button className="erd-action-btn" onClick={openCart}>
-              CART ({cartCount})
-            </button>
-            <Link href="/account" className="erd-action-link">
-              ACCOUNT
+            <Link href="/account" className="erd-action-link" aria-label="Account" style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
             </Link>
           </div>
 
@@ -87,7 +147,7 @@ export default function Navbar() {
           font-weight: 700;
           font-size: 24px;
           line-height: 0.95;
-          letter-spacing: 0.02em;
+          letter-spacing: 0.05em;
           color: #000000;
           text-decoration: none;
           display: block;
@@ -115,7 +175,7 @@ export default function Navbar() {
           gap: 36px;
         }
         .erd-nav a {
-          font-family: Arial, sans-serif;
+          font-family: var(--font-helvetica-bold-cond), sans-serif;
           font-size: 14px;
           font-weight: 700;
           letter-spacing: 0.04em;
@@ -162,10 +222,10 @@ export default function Navbar() {
           padding: 0;
           margin: 0;
           cursor: pointer;
-          font-family: Arial, sans-serif;
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: 0.04em;
+          font-family: var(--font-helvetica-thin-cond), sans-serif;
+          font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
           color: #000000;
           transition: opacity 0.2s ease;
@@ -180,10 +240,10 @@ export default function Navbar() {
           transform: none;
         }
         .erd-action-link {
-          font-family: Arial, sans-serif;
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: 0.04em;
+          font-family: var(--font-helvetica-thin-cond), sans-serif;
+          font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
           color: #000000;
           text-decoration: none;
@@ -196,6 +256,42 @@ export default function Navbar() {
         /* Add top padding to body to prevent content from going behind the fixed header */
         body {
           padding-top: 112px !important;
+        }
+
+        /* ══ INLINE SEARCH STYLES ══ */
+        .erd-search-inline-form {
+          display: inline-block;
+          margin: 0;
+          padding: 0;
+        }
+
+        .erd-search-inline-input {
+          background: transparent;
+          border: none;
+          outline: none;
+          padding: 0;
+          margin: 0;
+          width: 100px;
+          font-family: var(--font-helvetica-thin-cond), sans-serif;
+          font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #000000;
+          text-align: right;
+          caret-color: #000000;
+        }
+
+        .erd-search-inline-input::placeholder {
+          color: #888888;
+          opacity: 0.5;
+        }
+
+        .erd-cart-count {
+          font-family: var(--font-helvetica-thin-cond), sans-serif;
+          font-size: 11px;
+          font-weight: 700;
+          color: #000000;
         }
 
         /* ══ RESPONSIVE UTILITIES ══ */
@@ -269,6 +365,8 @@ export default function Navbar() {
             background: #000000;
             margin: 3px 0;
           }
+
+
 
           body {
             padding-top: 0 !important;

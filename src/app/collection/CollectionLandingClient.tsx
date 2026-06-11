@@ -536,7 +536,7 @@ export default function CollectionLandingClient({ products }: CollectionLandingC
         }
         .tonet-archive-card__image-wrap {
           position: relative;
-          aspect-ratio: 4 / 5;
+          aspect-ratio: 3 / 4;
           background: #E7E4DF;
           border-radius: 2px;
           overflow: hidden;

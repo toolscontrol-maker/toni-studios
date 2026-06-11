@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import type { Product } from "@/lib/shopify";
 import { useCart } from "@/context/CartContext";
 import { useUI } from "@/context/UIContext";
@@ -70,21 +70,207 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
     return result;
   }, [sizeOptionName, product.variants]);
 
-  // Default select first size if available
+  const [showStickyAdd, setShowStickyAdd] = useState(false);
+  const desktopSliderRef = useRef<HTMLDivElement>(null);
+
+  // Selected size state
   const [selectedSize, setSelectedSize] = useState<string>(() => {
-    return sizeOptions[0] || '';
+    if (product.variants && product.variants.length > 0) {
+      const opt = product.variants[0].selectedOptions.find(o => o.name.toLowerCase() === 'size');
+      return opt ? opt.value : '';
+    }
+    return '';
   });
 
-  // Determine active variant
-  const selectedVariant = useMemo(() => {
-    if (sizeOptionName && selectedSize) {
-      const match = product.variants.find(v =>
-        v.selectedOptions.find(o => o.name === sizeOptionName)?.value === selectedSize
-      );
-      if (match) return match;
+  const normalizeUrl = (url?: string) => {
+    if (!url) return '';
+    return url.split('?')[0];
+  };
+
+  // Find the nearest matched image index that corresponds to a variant
+  const matchedImageIndex = useMemo(() => {
+    if (!product.images || product.images.length === 0) return 0;
+    
+    let index = activeImageIndex;
+    while (index >= 0) {
+      const hasVariant = product.variants.some(v => {
+        if (!v.image?.url) return false;
+        return normalizeUrl(v.image.url) === normalizeUrl(product.images[index]);
+      });
+      if (hasVariant) return index;
+      index--;
     }
-    return product.variants[0];
-  }, [product.variants, sizeOptionName, selectedSize]);
+    
+    index = activeImageIndex + 1;
+    while (index < product.images.length) {
+      const hasVariant = product.variants.some(v => {
+        if (!v.image?.url) return false;
+        return normalizeUrl(v.image.url) === normalizeUrl(product.images[index]);
+      });
+      if (hasVariant) return index;
+      index++;
+    }
+    return 0;
+  }, [product.images, product.variants, activeImageIndex]);
+
+  // Filter variants that match the active color/image
+  const matchingVariantsForColor = useMemo(() => {
+    if (!product.images || product.images.length === 0 || !product.images[matchedImageIndex]) {
+      return product.variants;
+    }
+    const activeImgUrl = normalizeUrl(product.images[matchedImageIndex]);
+    const matches = product.variants.filter(v => v.image?.url && normalizeUrl(v.image.url) === activeImgUrl);
+    return matches.length > 0 ? matches : product.variants;
+  }, [product.variants, product.images, matchedImageIndex]);
+
+  // Determine active variant based on active color and active size selection
+  const selectedVariant = useMemo(() => {
+    if (matchingVariantsForColor.length === 0) return null;
+    
+    // Find variant in the current color matching the selected size
+    const match = matchingVariantsForColor.find(v =>
+      v.selectedOptions.find(o => o.name.toLowerCase() === 'size')?.value === selectedSize
+    );
+    if (match) return match;
+    
+    // Fallback to the first variant of this color
+    return matchingVariantsForColor[0];
+  }, [matchingVariantsForColor, selectedSize]);
+
+  // Keep size button highlighted in sync when scrolling through colors
+  useEffect(() => {
+    if (selectedVariant) {
+      const sizeOpt = selectedVariant.selectedOptions.find(o => o.name === sizeOptionName);
+      if (sizeOpt && sizeOpt.value !== selectedSize) {
+        setSelectedSize(sizeOpt.value);
+      }
+    }
+  }, [selectedVariant, sizeOptionName]);
+
+  const handleSizeClick = (size: string) => {
+    setSelectedSize(size);
+
+    // If the active variant changes, check if it's in the same color
+    const matchInCurrentColor = matchingVariantsForColor.find(v =>
+      v.selectedOptions.find(o => o.name === sizeOptionName)?.value === size
+    );
+
+    if (matchInCurrentColor) {
+      // It's in the same color, no need to scroll
+      return;
+    }
+
+    // It's in a different color. Find the first variant with this size in the entire product
+    const globalMatch = product.variants.find(v =>
+      v.selectedOptions.find(o => o.name === sizeOptionName)?.value === size
+    );
+
+    if (globalMatch && globalMatch.image?.url) {
+      const matchUrl = normalizeUrl(globalMatch.image.url);
+      const imgIndex = product.images.findIndex(url => normalizeUrl(url) === matchUrl);
+      if (imgIndex !== -1) {
+        setActiveImageIndex(imgIndex);
+        
+        // Scroll desktop slider
+        if (desktopSliderRef.current) {
+          const width = desktopSliderRef.current.clientWidth;
+          desktopSliderRef.current.scrollTo({
+            left: imgIndex * width,
+            behavior: 'smooth'
+          });
+        }
+        
+        // Scroll mobile slider
+        const mobileSlider = document.querySelector('.erd-mobile-images-slider');
+        if (mobileSlider) {
+          const width = mobileSlider.clientWidth;
+          mobileSlider.scrollTo({
+            left: imgIndex * width,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const slider = desktopSliderRef.current;
+    if (!slider) return;
+
+    let isDown = false;
+    let startX: number;
+    let scrollLeft: number;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      slider.style.scrollSnapType = 'none';
+      slider.style.scrollBehavior = 'auto';
+      slider.style.cursor = 'grabbing';
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    };
+
+    const handleMouseLeave = () => {
+      if (!isDown) return;
+      isDown = false;
+      slider.style.scrollSnapType = 'x mandatory';
+      slider.style.scrollBehavior = 'smooth';
+      slider.style.cursor = 'grab';
+      const currentScroll = slider.scrollLeft;
+      slider.scrollLeft = currentScroll + 1;
+      slider.scrollLeft = currentScroll;
+    };
+
+    const handleMouseUp = () => {
+      if (!isDown) return;
+      isDown = false;
+      slider.style.scrollSnapType = 'x mandatory';
+      slider.style.scrollBehavior = 'smooth';
+      slider.style.cursor = 'grab';
+      const currentScroll = slider.scrollLeft;
+      slider.scrollLeft = currentScroll + 1;
+      slider.scrollLeft = currentScroll;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      slider.scrollLeft = scrollLeft - walk;
+    };
+
+    slider.style.cursor = 'grab';
+    slider.addEventListener('mousedown', handleMouseDown);
+    slider.addEventListener('mouseleave', handleMouseLeave);
+    slider.addEventListener('mouseup', handleMouseUp);
+    slider.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      slider.removeEventListener('mousedown', handleMouseDown);
+      slider.removeEventListener('mouseleave', handleMouseLeave);
+      slider.removeEventListener('mouseup', handleMouseUp);
+      slider.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleWindowScroll = () => {
+      const threshold = window.innerHeight * 0.7;
+      if (window.scrollY > threshold) {
+        setShowStickyAdd(true);
+      } else {
+        setShowStickyAdd(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleWindowScroll);
+    };
+  }, []);
+
+
 
   // Extract color values
   const colorValues = useMemo(() => {
@@ -97,6 +283,18 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
       if (opt) seen.add(opt.value.toUpperCase());
     }
     return seen.size > 0 ? Array.from(seen).join(' / ') : 'BLACK / NAVY / IVORY';
+  }, [product.variants]);
+
+  const hasMultipleColors = useMemo(() => {
+    const colors = new Set<string>();
+    for (const v of product.variants) {
+      const opt = v.selectedOptions.find(o => {
+        const n = o.name.toLowerCase();
+        return n === 'color' || n === 'colour';
+      });
+      if (opt) colors.add(opt.value.toLowerCase());
+    }
+    return colors.size > 1;
   }, [product.variants]);
 
   // Process clean uppercase description
@@ -147,7 +345,12 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
               <h1 className="erd-product-title">
                 {product.title}
               </h1>
-              <div className="erd-product-color">
+              {hasMultipleColors && selectedVariant && (
+                <div className="erd-active-variant-badge">
+                  {selectedVariant.title.toUpperCase()}
+                </div>
+              )}
+              <div className={`erd-product-color ${!hasMultipleColors ? 'erd-no-badge' : ''}`}>
                 {colorValues}
               </div>
               <div className="erd-product-description">
@@ -158,21 +361,21 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
 
           {/* CENTER: Product Image */}
           <div className="erd-pdp-center">
-            <div className="erd-product-images-slider" onScroll={handleScroll}>
+            <div ref={desktopSliderRef} className="erd-product-images-slider" onScroll={handleScroll}>
               {product.images && product.images.length > 0 ? (
                 product.images.map((imgUrl, index) => (
                   <img
                     key={index}
                     src={imgUrl}
                     alt={`${product.title} - ${index + 1}`}
-                    className="erd-product-img"
+                    className={`erd-product-img ${index === activeImageIndex ? 'active' : ''}`}
                   />
                 ))
               ) : product.imageUrl ? (
                 <img
                   src={product.imageUrl}
                   alt={product.title}
-                  className="erd-product-img"
+                  className="erd-product-img active"
                 />
               ) : null}
             </div>
@@ -195,7 +398,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                     <button
                       key={size}
                       className={`erd-size-btn ${selectedSize === size ? 'selected' : ''}`}
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => handleSizeClick(size)}
                     >
                       {size}
                     </button>
@@ -214,22 +417,26 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           </div>
         </div>
 
-        {/* MOBILE LAYOUT (Strict Visual Proportion System: 8vh/15vh/5vh/42vh/10vh/20vh) */}
+        {/* MOBILE LAYOUT (Viewport 1 & Scrollable Content Flow) */}
         <div className="erd-mobile-pdp erd-mobile-only">
-          <div className="erd-mobile-first-fold">
-            {/* HEADER SPACER - 8% viewport height */}
+          
+          {/* VIEWPORT 1: Hero & Purchase Panel (Fits exactly on entrance) */}
+          <div className="erd-mobile-viewport-1">
+            {/* Header Spacer (accounts for fixed header height) */}
             <div className="erd-mobile-header-spacer" />
 
-            {/* PRODUCT TITLE BLOCK - 15% viewport height */}
+            {/* Product Title and Colorway */}
             <div className="erd-mobile-title-block">
               <h1 className="erd-mobile-title">{product.title}</h1>
+              {hasMultipleColors && selectedVariant && (
+                <div className="erd-active-variant-badge">
+                  {selectedVariant.title.toUpperCase()}
+                </div>
+              )}
               <div className="erd-mobile-colorway">{colorValues}</div>
             </div>
 
-            {/* NEGATIVE SPACE - 5% viewport height */}
-            <div className="erd-mobile-space-spacer" />
-
-            {/* PRODUCT IMAGE - 42% viewport height */}
+            {/* Main Product Image Container */}
             <div className="erd-mobile-image-container">
               <div className="erd-mobile-images-slider" onScroll={handleScroll}>
                 {product.images && product.images.length > 0 ? (
@@ -238,14 +445,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                       key={index}
                       src={imgUrl}
                       alt={`${product.title} - ${index + 1}`}
-                      className="erd-mobile-hero-img"
+                      className={`erd-mobile-hero-img ${index === activeImageIndex ? 'active' : ''}`}
                     />
                   ))
                 ) : product.imageUrl ? (
                   <img
                     src={product.imageUrl}
                     alt={product.title}
-                    className="erd-mobile-hero-img"
+                    className="erd-mobile-hero-img active"
                   />
                 ) : null}
               </div>
@@ -259,21 +466,25 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
               )}
             </div>
 
-            {/* PURCHASE CONTROLS - 10% viewport height */}
-            <div className="erd-mobile-purchase-container">
-              {sizeOptions.length > 0 && (
+            {/* Size Selectors */}
+            {sizeOptions.length > 0 && (
+              <div className="erd-mobile-sizes-wrap">
                 <div className="erd-mobile-sizes">
                   {sizeOptions.map((size) => (
                     <button
                       key={size}
                       className={`erd-mobile-size-btn ${selectedSize === size ? 'selected' : ''}`}
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => handleSizeClick(size)}
                     >
                       {size}
                     </button>
                   ))}
                 </div>
-              )}
+              </div>
+            )}
+
+            {/* Add To Cart button (centered, compact width) */}
+            <div className="erd-mobile-add-btn-wrap">
               <button
                 className="erd-mobile-add-btn"
                 onClick={handleAddToCart}
@@ -282,33 +493,49 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                 {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
               </button>
             </div>
+          </div>
 
-            {/* DESCRIPTION PREVIEW - 20% viewport height */}
-            <div className="erd-mobile-desc-preview">
+          {/* BELOW THE FOLD CONTENT */}
+          <div className="erd-mobile-below-fold">
+            {/* Product Description */}
+            <div className="erd-mobile-desc-wrap">
               <p className="erd-mobile-desc-text">
                 {cleanDescription || "PREMIUM GARMENT CRAFTED IN PORTUGAL. FINISHED WITH TRADITIONAL TECHNIQUES."}
               </p>
             </div>
+
+            {/* Related Products */}
+            {relatedProductsByTag && relatedProductsByTag.length > 0 && (
+              <div className="erd-mobile-related-section">
+                <h2 className="erd-mobile-related-heading">RELATED</h2>
+                <div className="erd-mobile-related-carousel">
+                  {relatedProductsByTag.map((p) => (
+                    <Link key={p.handle} href={`/product/${p.handle}`} className="erd-mobile-related-card">
+                      {p.imageUrl && (
+                        <img src={p.imageUrl} alt={p.title} className="erd-mobile-related-img" />
+                      )}
+                      <div className="erd-mobile-related-info">
+                        <span className="erd-mobile-related-title">{p.title}</span>
+                        <span className="erd-mobile-related-color">{getProductColor(p)}</span>
+                        <span className="erd-mobile-related-price">{formatProductPrice(p.price, p.currencyCode)}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* RELATED PRODUCTS (scrolling area) */}
-          {relatedProductsByTag && relatedProductsByTag.length > 0 && (
-            <div className="erd-mobile-related-section">
-              <h2 className="erd-mobile-related-heading">RELATED</h2>
-              <div className="erd-mobile-related-carousel">
-                {relatedProductsByTag.map((p) => (
-                  <Link key={p.handle} href={`/product/${p.handle}`} className="erd-mobile-related-card">
-                    {p.imageUrl && (
-                      <img src={p.imageUrl} alt={p.title} className="erd-mobile-related-img" />
-                    )}
-                    <div className="erd-mobile-related-info">
-                      <span className="erd-mobile-related-title">{p.title}</span>
-                      <span className="erd-mobile-related-color">{getProductColor(p)}</span>
-                      <span className="erd-mobile-related-price">{formatProductPrice(p.price, p.currencyCode)}</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+          {/* Sticky Header Add to Cart Button (visible on scroll) */}
+          {showStickyAdd && (
+            <div className="erd-mobile-sticky-header-btn-wrap">
+              <button
+                className="erd-mobile-sticky-header-btn"
+                onClick={handleAddToCart}
+                disabled={adding || !selectedVariant?.availableForSale}
+              >
+                {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
+              </button>
             </div>
           )}
         </div>
@@ -387,8 +614,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
         }
 
         .erd-product-title {
-          font-family: Arial, sans-serif;
-          font-weight: 900;
+          font-family: var(--font-coolvetica), sans-serif;
+          font-weight: normal;
           font-size: 29px;
           line-height: 0.9;
           text-transform: uppercase;
@@ -396,7 +623,22 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           max-width: 340px;
           color: #000000;
           margin: 0 0 12px 0;
-          letter-spacing: -0.01em;
+          letter-spacing: 0.05em;
+        }
+
+        .erd-active-variant-badge {
+          display: inline-block;
+          background-color: #000000;
+          color: #ffffff;
+          font-family: var(--font-coolvetica), sans-serif;
+          font-size: 11px;
+          font-weight: normal;
+          padding: 4px 10px;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          border-radius: 0;
+          text-align: center;
         }
 
         .erd-product-color {
@@ -406,12 +648,15 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           text-transform: uppercase;
           color: #000000;
           text-align: center;
-          margin-bottom: 40px;
+          margin-bottom: 30px;
           letter-spacing: 0.02em;
+        }
+        .erd-product-color.erd-no-badge {
+          margin-bottom: 16px;
         }
 
         .erd-product-description {
-          font-family: Arial, sans-serif;
+          font-family: var(--font-helvetica-roman), 'Helvetica Neue', Helvetica, Arial, sans-serif;
           font-size: 10px;
           line-height: 1.4;
           font-weight: 400;
@@ -456,6 +701,14 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           pointer-events: none;
           scroll-snap-align: center;
           flex-shrink: 0;
+          opacity: 0.3;
+          transform: scale(0.93);
+          transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+          will-change: opacity, transform;
+        }
+        .erd-product-img.active {
+          opacity: 1;
+          transform: scale(1);
         }
 
         .erd-desktop-image-indicator {
@@ -557,8 +810,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
         /* ══ RELATED PRODUCTS (DESKTOP) ══ */
         .erd-related-section {
           width: 100%;
-          max-width: 1400px;
-          padding: 80px 40px;
+          max-width: 100vw;
+          padding: 80px 24px;
           box-sizing: border-box;
         }
         .erd-related-heading {
@@ -573,7 +826,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
         .erd-related-carousel {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
-          gap: 24px;
+          gap: 12px;
           width: 100%;
         }
         .erd-related-card {
@@ -586,8 +839,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
         }
         .erd-related-img-wrap {
           width: 100%;
-          aspect-ratio: 6 / 10;
-          background: transparent;
+          aspect-ratio: 3 / 4;
+          background: #ffffff;
           overflow: hidden;
           display: flex;
           align-items: center;
@@ -673,30 +926,35 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           .erd-mobile-pdp {
             width: 100%;
             background-color: #ffffff;
-          }
-
-          .erd-mobile-first-fold {
             display: flex;
             flex-direction: column;
-            width: 100%;
-            height: 100vh;
-            height: 100dvh; /* dynamic viewport height if supported */
-            box-sizing: border-box;
-            overflow: hidden;
-            padding: 0;
-            margin: 0;
+            align-items: center;
           }
 
-          /* 16% Header Spacer */
+          /* Viewport 1 (Hero & Purchase - Fits screen exactly on entrance) */
+          .erd-mobile-viewport-1 {
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            padding-bottom: 24px;
+            background: #ffffff;
+          }
+
+          /* Header Spacer (accounts for fixed brand bar) */
           .erd-mobile-header-spacer {
-            height: 16vh;
+            height: 15vh;
             width: 100%;
             flex-shrink: 0;
           }
 
-          /* 10% Product Title Block */
+          /* Title Block */
           .erd-mobile-title-block {
-            height: 10vh;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -704,201 +962,225 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             align-items: center;
             flex-shrink: 0;
             box-sizing: border-box;
-            padding: 0 16px;
+            padding: 0 24px;
+            margin-bottom: 12px;
           }
 
           .erd-mobile-title {
-            font-family: Arial, sans-serif;
-            font-weight: 900;
-            font-size: 32px;
-            line-height: 0.85; /* Extremely tight line-height */
+            font-family: var(--font-coolvetica), sans-serif;
+            font-weight: normal;
+            font-size: clamp(18px, 6vw, 24px);
+            line-height: 1.1;
             text-transform: uppercase;
             text-align: center;
             margin: 0;
-            max-width: 340px;
-            letter-spacing: -0.02em;
+            max-width: 360px;
+            letter-spacing: 0.05em;
             color: #000000;
           }
 
           .erd-mobile-colorway {
             font-family: Arial, sans-serif;
-            font-size: 9px;
+            font-size: clamp(9px, 2.5vw, 10px);
             font-weight: 700;
             text-transform: uppercase;
             color: #000000;
             text-align: center;
             margin-top: 6px;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
           }
 
-          /* 2% Negative Space Spacer */
-          .erd-mobile-space-spacer {
-            height: 2vh;
-            width: 100%;
-            flex-shrink: 0;
-          }
-
-          /* 42% Product Image */
+          /* Image Container (occupies full width of screen) */
           .erd-mobile-image-container {
             position: relative;
-            height: 42vh;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
+            width: 100vw;
+            aspect-ratio: 3 / 4;
             overflow: hidden;
             box-sizing: border-box;
+            padding: 0;
+            flex-shrink: 0;
           }
 
           .erd-mobile-images-slider {
             display: flex;
             flex-direction: row;
             width: 100%;
-            height: 42vh;
+            height: 100%;
             overflow-x: auto;
             scrollbar-width: none;
             scroll-snap-type: x mandatory;
             align-items: center;
             justify-content: flex-start;
-            gap: calc(100vw - 25.2vh);
-            padding: 0 calc((100vw - 25.2vh) / 2);
-            box-sizing: border-box;
           }
           .erd-mobile-images-slider::-webkit-scrollbar {
             display: none;
           }
 
           .erd-mobile-hero-img {
-            width: auto;
-            height: 42vh;
-            aspect-ratio: 6 / 10;
-            object-fit: cover;
+            width: 100vw;
+            height: 100%;
+            object-fit: contain;
             background: transparent;
             scroll-snap-align: center;
             flex-shrink: 0;
+            opacity: 0.3;
+            transform: scale(0.93);
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: opacity, transform;
+          }
+          .erd-mobile-hero-img.active {
+            opacity: 1;
+            transform: scale(1);
           }
 
           .erd-mobile-image-indicator {
             position: absolute;
-            bottom: 12px;
+            bottom: 16px;
             left: 0;
             right: 0;
             display: flex;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 28px;
             font-family: Arial, sans-serif;
-            font-size: 8.5px;
+            font-size: 8px;
             font-weight: 700;
             letter-spacing: 0.05em;
-            color: #000000;
+            color: #888888;
             text-transform: uppercase;
             pointer-events: none;
             z-index: 10;
           }
 
-          /* 10% Purchase Controls */
-          .erd-mobile-purchase-container {
-            height: 10vh;
-            width: 100%;
+          /* Sizes selectors */
+          .erd-mobile-sizes-wrap {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: 100%;
             flex-shrink: 0;
-            box-sizing: border-box;
-            padding: 0 16px;
-            gap: 6px;
+            margin: 16px 0;
           }
 
           .erd-mobile-sizes {
             display: flex;
-            justify-content: space-between;
-            width: 220px;
-            gap: 0;
+            justify-content: center;
+            gap: 24px;
           }
 
           .erd-mobile-size-btn {
-            flex: 1;
             background: none;
-            border: 1px solid transparent;
-            padding: 4px 0;
+            border: none;
+            padding: 4px 8px;
             cursor: pointer;
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            color: #000000;
+            color: #888888;
+            text-transform: uppercase;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
             border-radius: 0;
             text-align: center;
           }
-          
           .erd-mobile-size-btn.selected {
-            border: 1px solid #000000;
+            color: #000000;
+            border-bottom: 2px solid #000000;
+          }
+
+          /* Add to Cart Button wrap */
+          .erd-mobile-add-btn-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-shrink: 0;
           }
 
           .erd-mobile-add-btn {
             width: 220px;
-            height: 34px;
+            height: 38px;
             background: #000000;
             color: #ffffff;
             border: none;
             font-family: Arial, sans-serif;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            border-radius: 0;
+            letter-spacing: 0.05em;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            letter-spacing: 0.02em;
+            border-radius: 0;
+            transition: opacity 0.2s;
+          }
+          .erd-mobile-add-btn:hover:not(:disabled) {
+            opacity: 0.85;
+          }
+          .erd-mobile-add-btn:disabled {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
           }
 
-          /* 20% Description Preview */
-          .erd-mobile-desc-preview {
-            height: 20vh;
+          /* Below fold contents styling */
+          .erd-mobile-below-fold {
             width: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          /* Editorial note and descriptions */
+          .erd-mobile-desc-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 48px 32px 64px 32px;
             box-sizing: border-box;
-            padding: 16px 24px;
-            flex-shrink: 0;
-            overflow: hidden;
           }
 
           .erd-mobile-desc-text {
-            font-family: Arial, sans-serif;
-            font-size: 9px;
-            line-height: 1.4;
+            font-family: var(--font-helvetica-roman), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 9.5px;
+            line-height: 1.6;
             font-weight: 400;
             text-transform: uppercase;
             color: #000000;
-            text-align: left;
+            text-align: justify;
+            text-align-last: center;
+            letter-spacing: 0.02em;
             margin: 0;
+            max-width: 340px;
             width: 100%;
           }
 
-          /* Mobile Related Products (scrolling area) */
+          /* Related Carousel */
           .erd-mobile-related-section {
             width: 100%;
-            padding: 40px 0 80px 0;
+            border-top: 1px solid #eaeaea;
+            padding: 56px 0 80px 0;
             box-sizing: border-box;
           }
 
           .erd-mobile-related-heading {
             font-family: Arial, sans-serif;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 900;
             text-transform: uppercase;
             color: #000000;
-            margin: 0 0 24px 13.5vw;
-            letter-spacing: -0.01em;
+            margin: 0 0 28px 32px;
+            letter-spacing: 0.05em;
           }
 
           .erd-mobile-related-carousel {
             display: flex;
             flex-direction: row;
-            gap: 27vw;
+            gap: 24px;
             overflow-x: auto;
             scrollbar-width: none;
             scroll-snap-type: x mandatory;
-            padding: 0 13.5vw;
+            padding: 0 32px;
             box-sizing: border-box;
           }
           .erd-mobile-related-carousel::-webkit-scrollbar {
@@ -909,7 +1191,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 73vw;
+            width: 65vw;
             flex-shrink: 0;
             text-decoration: none;
             text-align: center;
@@ -918,42 +1200,81 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
 
           .erd-mobile-related-img {
             width: 100%;
-            height: 80vw;
+            aspect-ratio: 3 / 4;
             object-fit: contain;
-            background: transparent;
+            background: #ffffff;
           }
 
           .erd-mobile-related-info {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            margin-top: 12px;
+            gap: 4px;
+            margin-top: 16px;
           }
 
           .erd-mobile-related-title {
             font-family: Arial, sans-serif;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 900;
             color: #000000;
             text-transform: uppercase;
-            letter-spacing: -0.01em;
+            letter-spacing: 0.02em;
             line-height: 1.2;
           }
 
           .erd-mobile-related-color {
             font-family: Arial, sans-serif;
-            font-size: 7.5px;
+            font-size: 8px;
             font-weight: 700;
-            color: #000000;
+            color: #777777;
             text-transform: uppercase;
           }
 
           .erd-mobile-related-price {
             font-family: Arial, sans-serif;
-            font-size: 7.5px;
+            font-size: 9px;
             font-weight: 700;
             color: #000000;
+          }
+
+          /* Sticky Header Add to Cart wrap */
+          .erd-mobile-sticky-header-btn-wrap {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .erd-mobile-sticky-header-btn {
+            height: 28px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            font-family: Arial, sans-serif;
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 14px;
+            border-radius: 0;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .erd-mobile-sticky-header-btn:hover:not(:disabled) {
+            opacity: 0.85;
+          }
+          .erd-mobile-sticky-header-btn:disabled {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
           }
         }
       `}</style>
