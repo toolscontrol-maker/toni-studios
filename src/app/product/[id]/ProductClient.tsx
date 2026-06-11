@@ -123,6 +123,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
     return matches.length > 0 ? matches : product.variants;
   }, [product.variants, product.images, matchedImageIndex]);
 
+  const isSizeAvailable = (size: string) => {
+    const variant = matchingVariantsForColor.find(v =>
+      v.selectedOptions.some(o => o.name.toLowerCase() === 'size' && o.value === size)
+    );
+    return variant ? variant.availableForSale : false;
+  };
+
   // Determine active variant based on active color and active size selection
   const selectedVariant = useMemo(() => {
     if (matchingVariantsForColor.length === 0) return null;
@@ -397,7 +404,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                   {sizeOptions.map((size) => (
                     <button
                       key={size}
-                      className={`erd-size-btn ${selectedSize === size ? 'selected' : ''}`}
+                      className={`erd-size-btn ${selectedSize === size ? 'selected' : ''} ${!isSizeAvailable(size) ? 'out-of-stock' : ''}`}
                       onClick={() => handleSizeClick(size)}
                     >
                       {size}
@@ -411,7 +418,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                 onClick={handleAddToCart}
                 disabled={adding || !selectedVariant?.availableForSale}
               >
-                {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
+                {adding ? 'ADDING...' : !selectedVariant?.availableForSale ? 'SOLD OUT' : `ADD TO CART — ${priceFormatted}`}
               </button>
 
               <div className="erd-payment-carousel">
@@ -508,7 +515,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                   {sizeOptions.map((size) => (
                     <button
                       key={size}
-                      className={`erd-mobile-size-btn ${selectedSize === size ? 'selected' : ''}`}
+                      className={`erd-mobile-size-btn ${selectedSize === size ? 'selected' : ''} ${!isSizeAvailable(size) ? 'out-of-stock' : ''}`}
                       onClick={() => handleSizeClick(size)}
                     >
                       {size}
@@ -525,7 +532,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                 onClick={handleAddToCart}
                 disabled={adding || !selectedVariant?.availableForSale}
               >
-                {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
+                {adding ? 'ADDING...' : !selectedVariant?.availableForSale ? 'SOLD OUT' : `ADD TO CART — ${priceFormatted}`}
               </button>
 
               <div className="erd-payment-carousel">
@@ -604,7 +611,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                 onClick={handleAddToCart}
                 disabled={adding || !selectedVariant?.availableForSale}
               >
-                {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
+                {adding ? 'ADDING...' : !selectedVariant?.availableForSale ? 'SOLD OUT' : `ADD TO CART — ${priceFormatted}`}
               </button>
             </div>
           )}
@@ -817,34 +824,53 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
         .erd-sizes-row {
           display: flex;
           flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap: 16px;
           width: 100%;
-          margin-bottom: 28px;
-          gap: 0;
+          margin-bottom: 24px;
         }
 
         .erd-size-btn {
-          flex: 1;
+          width: 32px;
+          height: 32px;
           background: none;
           border: 1px solid transparent;
-          padding: 8px 0;
           cursor: pointer;
-          font-family: Arial, sans-serif;
-          font-size: 12px;
-          font-weight: 700;
+          font-family: var(--font-helvetica-ext-black-cond), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          font-size: 15px;
+          font-weight: normal;
           color: #000000;
-          transition: opacity 0.2s ease;
+          transition: all 0.2s ease;
           border-radius: 0;
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .erd-size-btn:hover {
+        .erd-size-btn:hover:not(.out-of-stock) {
           opacity: 0.6;
-          background: none;
-          transform: none;
         }
         .erd-size-btn.selected {
-          border: none;
-          border-bottom: 2px solid #000000;
-          padding-bottom: 8px;
+          border: 1px solid #000000;
+        }
+
+        .erd-size-btn.out-of-stock,
+        .erd-mobile-size-btn.out-of-stock {
+          position: relative;
+          opacity: 0.35;
+          cursor: not-allowed;
+        }
+
+        .erd-size-btn.out-of-stock::after,
+        .erd-mobile-size-btn.out-of-stock::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(to top right, transparent 46%, #000000 49%, #000000 51%, transparent 54%);
+          pointer-events: none;
         }
 
         .erd-add-btn {
@@ -1205,27 +1231,30 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           .erd-mobile-sizes {
             display: flex;
             justify-content: center;
-            gap: 24px;
+            gap: 16px;
           }
 
           .erd-mobile-size-btn {
+            width: 32px;
+            height: 32px;
             background: none;
-            border: none;
-            padding: 4px 8px;
+            border: 1px solid transparent;
             cursor: pointer;
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            font-weight: 700;
-            color: #888888;
-            text-transform: uppercase;
-            border-bottom: 2px solid transparent;
-            transition: color 0.2s, border-color 0.2s;
+            font-family: var(--font-helvetica-ext-black-cond), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 15px;
+            font-weight: normal;
+            color: #000000;
+            transition: all 0.2s ease;
             border-radius: 0;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .erd-mobile-size-btn:hover:not(.out-of-stock) {
+            opacity: 0.6;
           }
           .erd-mobile-size-btn.selected {
-            color: #000000;
-            border-bottom: 2px solid #000000;
+            border: 1px solid #000000;
           }
 
           /* Add to Cart Button wrap */
