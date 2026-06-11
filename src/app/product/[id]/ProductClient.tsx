@@ -422,13 +422,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                     <span>BITCOIN</span>
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                   </div>
                   <div className="erd-payment-carousel-group">
@@ -436,13 +436,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                     <span>BITCOIN</span>
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                   </div>
                 </div>
@@ -536,13 +536,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                     <span>BITCOIN</span>
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                   </div>
                   <div className="erd-payment-carousel-group">
@@ -550,13 +550,13 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                     <span>BITCOIN</span>
                     <span className="dot">•</span>
                     <span>SOLANA</span>
                     <span className="dot">•</span>
-                    <span>TARJETA</span>
+                    <span>CARD</span>
                     <span className="dot">•</span>
                   </div>
                 </div>
