@@ -452,7 +452,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           width: 100%;
           height: auto;
           max-height: 70vh;
-          object-fit: contain;
+          object-fit: cover;
           pointer-events: none;
           scroll-snap-align: center;
           flex-shrink: 0;
@@ -772,7 +772,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             width: auto;
             height: 42vh;
             aspect-ratio: 6 / 10;
-            object-fit: contain;
+            object-fit: cover;
             background: transparent;
             scroll-snap-align: center;
             flex-shrink: 0;
