@@ -687,9 +687,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             margin: 0;
           }
 
-          /* 12% Header Spacer */
+          /* 16% Header Spacer */
           .erd-mobile-header-spacer {
-            height: 12vh;
+            height: 16vh;
             width: 100%;
             flex-shrink: 0;
           }
@@ -710,12 +710,12 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           .erd-mobile-title {
             font-family: Arial, sans-serif;
             font-weight: 900;
-            font-size: 26px;
+            font-size: 32px;
             line-height: 0.85; /* Extremely tight line-height */
             text-transform: uppercase;
             text-align: center;
             margin: 0;
-            max-width: 320px;
+            max-width: 340px;
             letter-spacing: -0.02em;
             color: #000000;
           }
@@ -760,8 +760,8 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             scroll-snap-type: x mandatory;
             align-items: center;
             justify-content: flex-start;
-            gap: 16vw;
-            padding: 0 8vw;
+            gap: calc(100vw - 25.2vh);
+            padding: 0 calc((100vw - 25.2vh) / 2);
             box-sizing: border-box;
           }
           .erd-mobile-images-slider::-webkit-scrollbar {
@@ -769,8 +769,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           }
 
           .erd-mobile-hero-img {
-            width: 84vw;
+            width: auto;
             height: 42vh;
+            aspect-ratio: 6 / 10;
             object-fit: contain;
             background: transparent;
             scroll-snap-align: center;
@@ -851,9 +852,9 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             letter-spacing: 0.02em;
           }
 
-          /* 24% Description Preview */
+          /* 20% Description Preview */
           .erd-mobile-desc-preview {
-            height: 24vh;
+            height: 20vh;
             width: 100%;
             box-sizing: border-box;
             padding: 16px 24px;
