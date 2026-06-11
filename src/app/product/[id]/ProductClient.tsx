@@ -413,6 +413,41 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
               >
                 {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
               </button>
+
+              <div className="erd-payment-carousel">
+                <div className="erd-payment-carousel-blur-left"></div>
+                <div className="erd-payment-carousel-track">
+                  <div className="erd-payment-carousel-group">
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                  </div>
+                  <div className="erd-payment-carousel-group">
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                  </div>
+                </div>
+                <div className="erd-payment-carousel-blur-right"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -492,6 +527,41 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
               >
                 {adding ? 'ADDING...' : `ADD TO CART — ${priceFormatted}`}
               </button>
+
+              <div className="erd-payment-carousel">
+                <div className="erd-payment-carousel-blur-left"></div>
+                <div className="erd-payment-carousel-track">
+                  <div className="erd-payment-carousel-group">
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                  </div>
+                  <div className="erd-payment-carousel-group">
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                    <span>BITCOIN</span>
+                    <span className="dot">•</span>
+                    <span>SOLANA</span>
+                    <span className="dot">•</span>
+                    <span>TARJETA</span>
+                    <span className="dot">•</span>
+                  </div>
+                </div>
+                <div className="erd-payment-carousel-blur-right"></div>
+              </div>
             </div>
           </div>
 
@@ -807,6 +877,77 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           cursor: not-allowed;
         }
 
+        /* ══ PAYMENT METHODS CAROUSEL ══ */
+        .erd-payment-carousel {
+          position: relative;
+          width: 240px;
+          overflow: hidden;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          margin-top: 14px;
+        }
+
+        .erd-payment-carousel-blur-left,
+        .erd-payment-carousel-blur-right {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 35px;
+          z-index: 2;
+          pointer-events: none;
+        }
+
+        .erd-payment-carousel-blur-left {
+          left: 0;
+          background: linear-gradient(to right, #ffffff 15%, rgba(255, 255, 255, 0));
+          backdrop-filter: blur(1.5px);
+          -webkit-backdrop-filter: blur(1.5px);
+        }
+
+        .erd-payment-carousel-blur-right {
+          right: 0;
+          background: linear-gradient(to left, #ffffff 15%, rgba(255, 255, 255, 0));
+          backdrop-filter: blur(1.5px);
+          -webkit-backdrop-filter: blur(1.5px);
+        }
+
+        .erd-payment-carousel-track {
+          display: flex;
+          width: max-content;
+          animation: erdPaymentMarquee 15s linear infinite;
+        }
+
+        .erd-payment-carousel-group {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding-right: 16px;
+          white-space: nowrap;
+        }
+
+        .erd-payment-carousel-group span {
+          font-family: Arial, sans-serif;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          color: #888888;
+          text-transform: uppercase;
+        }
+
+        .erd-payment-carousel-group .dot {
+          color: #cccccc;
+        }
+
+        @keyframes erdPaymentMarquee {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
+
         /* ══ RELATED PRODUCTS (DESKTOP) ══ */
         .erd-related-section {
           width: 100%;
@@ -1091,8 +1232,16 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           .erd-mobile-add-btn-wrap {
             width: 100%;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            gap: 12px;
+          }
+
+          .erd-payment-carousel {
+            width: 220px;
+            margin-top: 0;
           }
 
           .erd-mobile-add-btn {
