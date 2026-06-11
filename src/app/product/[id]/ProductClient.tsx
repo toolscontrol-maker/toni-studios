@@ -948,7 +948,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
 
           /* Header Spacer (accounts for fixed brand bar) */
           .erd-mobile-header-spacer {
-            height: 56px;
+            height: 112px;
             width: 100%;
             flex-shrink: 0;
           }
