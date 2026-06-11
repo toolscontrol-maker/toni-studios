@@ -948,7 +948,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
 
           /* Header Spacer (accounts for fixed brand bar) */
           .erd-mobile-header-spacer {
-            height: 15vh;
+            height: 56px;
             width: 100%;
             flex-shrink: 0;
           }
@@ -963,7 +963,7 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
             flex-shrink: 0;
             box-sizing: border-box;
             padding: 0 24px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
           }
 
           .erd-mobile-title {
@@ -994,11 +994,11 @@ export default function ProductClient({ product, relatedProductsByTag }: Product
           .erd-mobile-image-container {
             position: relative;
             width: 100vw;
-            aspect-ratio: 3 / 4;
+            flex: 1;
+            min-height: 0;
             overflow: hidden;
             box-sizing: border-box;
             padding: 0;
-            flex-shrink: 0;
           }
 
           .erd-mobile-images-slider {
